@@ -1,0 +1,33 @@
+{
+  "name": "purescript-turbine",
+  "version": "0.0.1",
+  "description": "PureScript bindings for Turbine",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "pulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/funkia/purescript-turbine.git"
+  },
+  "keywords": [
+    "purescript",
+    "turbine",
+    "frp",
+    "hareactive",
+    "pure"
+  ],
+  "author": "Funkia",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/funkia/purescript-turbine/issues"
+  },
+  "homepage": "https://github.com/funkia/purescript-turbine#readme",
+  "dependencies": {
+    "@funkia/hareactive": "^0.1.3",
+    "@funkia/turbine": "^0.1.3"
+  }
+}

@@ -2,11 +2,14 @@ module Turbine.HTML
   ( h1
   , div
   , span
+  , input
+  , button
   ) where
 
 import Prelude (Unit, (<<<))
-import Hareactive (Behavior)
+import Data.Hareactive (Behavior, Stream)
 import Turbine (Component, class IsComponent, toComponent)
+import Data.Function.Uncurried (Fn0, runFn0)
 
 div :: forall a b. IsComponent a b => a -> Component Unit
 div = _div <<< toComponent
@@ -23,9 +26,17 @@ h1 = _h1 <<< toComponent
 
 foreign import _h1 :: forall a. Component a -> Component Unit
 
-type InputOut = {text: Behavior String}
+type InputOut = {inputValue :: Behavior String}
 
-input :: forall a b. IsComponent a b => a -> Component Input
-input = _input <<< toComponent
+input :: Component InputOut
+input = runFn0 _input
 
-foreign import _input :: forall a. Component a -> Component Unit
+foreign import _input :: Fn0 (Component InputOut)
+
+type ButtonOut = {click :: Stream Unit}
+
+button :: String -> Component ButtonOut
+button = _button
+
+foreign import _button :: String -> Component ButtonOut
+

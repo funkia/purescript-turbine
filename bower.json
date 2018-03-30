@@ -12,7 +12,8 @@
     "purescript-dom": "^4.15.0",
     "purescript-functions": "^3.0.0",
     "purescript-monoid": "^3.3.0",
-    "purescript-record": "^0.2.6"
+    "purescript-record": "^0.2.6",
+    "purescript-arrays": "^4.3.0"
   },
   "devDependencies": {
     "purescript-psci-support": "^3.0.0"

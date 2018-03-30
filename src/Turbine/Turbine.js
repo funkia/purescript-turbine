@@ -22,6 +22,18 @@ exports._bind = function(c, f) {
   return c.chain(f);
 }
 
+exports._merge = function() {
+  return T.merge;
+}
+
+exports._output = function() {
+  return function(c, r) {
+    return T.output(r, c);
+  }
+}
+
+exports._list = T.list;
+
 exports._modelView = T.modelView;
 
 exports.dynamic = T.dynamic;

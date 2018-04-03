@@ -63,18 +63,6 @@ list = runFn3 _list
 foreign import _list :: forall a b o.
   Fn3 (a -> Component o b) (Behavior (Array a)) (a -> Int) (Component {} (Behavior (Array b)))
 
-{-- -- | Type class representing types that can be converted into a component. --}
-{-- class IsComponent a o b | a -> o, a -> b where --}
-{--   toComponent :: a -> Component o b --}
-
-{-- instance toComponentComponent :: IsComponent (Component o a) o a where --}
-{--   toComponent = id --}
-
-{-- instance toComponentString :: IsComponent String {} Unit where --}
-{--   toComponent = _text --}
-
-{-- instance toComponentBehavior :: forall a b. IsComponent a b => IsComponent Behavior (IsComponent a b) --}
-
 -- | Type class representing types that can be converted into a behavior.
 -- | Any type can be converted into a behavior with `pure a`. But only a few
 -- | key types implement this type class in the cases where auto-lifting is
@@ -90,10 +78,10 @@ instance isBehaviorBehavior :: IsBehavior (Behavior a) a where
 instance isBehaviorString :: IsBehavior String String where
   toBehavior = pure
 
-merge :: forall a o b p q. Union o p q => Component { | o } a -> Component { | p } b -> Component { | q } b
+merge :: forall a o b p q. Union o p q => Component { | o } a -> Component { | p } b -> Component { | q } { | q }
 merge = runFn2 _merge
 
-foreign import _merge :: forall a o b p q. Union o p q => Fn2 (Component { | o } a) (Component { | p } b) (Component { | q } b)
+foreign import _merge :: forall a o b p q. Union o p q => Fn2 (Component { | o } a) (Component { | p } b) (Component { | q } { | q })
 
 infixl 0 merge as \>
 
@@ -102,12 +90,5 @@ output = runFn2 _output
 
 foreign import _output :: forall a o p q. Union o p q => Fn2 (Component { | o } a) (a -> { | p }) (Component { | q } a)
 
-{-- combine :: forall a b c. Union a b c => Component { | a } -> Component { | b } -> Component { | c } --}
-{-- combine a b = do --}
-{--   aOut <- a --}
-{--   bOut <- b --}
-{--   pure (B.build (B.merge bOut) aOut) --}
+foreign import loop :: forall a o. (a -> Component o a) -> Component o a
 
-{-- infixl 0 combine as <+> --}
-
--- \r1 r2 -> Data.Record.Builder.build (Data.Record.Builder.merge r1) r2

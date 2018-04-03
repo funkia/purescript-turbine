@@ -22,6 +22,8 @@ exports._merge = function() {
   return T.merge;
 }
 
+exports.loop = T.loop;
+
 exports._output = function() {
   return function(c, r) {
     return T.output(r, c);

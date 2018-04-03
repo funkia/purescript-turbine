@@ -1,4 +1,6 @@
-module Counters.Version1 where
+module Counters.Version1
+  ( counter
+  ) where
 
 import Prelude
 

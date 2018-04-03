@@ -2,10 +2,6 @@ var T = require('@funkia/turbine');
 
 exports._runComponent = T.runComponent;
 
-exports._text = T.text;
-
-exports._textB = T.dynamic;
-
 exports._map = function(f, c) {
   return c.map(f);
 }

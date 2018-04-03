@@ -11,3 +11,9 @@ exports._input = T.elements.input;
 exports._a = T.elements.a;
 
 exports._button = T.elements.button;
+
+exports._text = T.text;
+
+exports._textB = T.dynamic;
+
+exports.br = T.elements.br;

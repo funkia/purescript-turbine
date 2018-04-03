@@ -2,8 +2,6 @@ module Turbine
   ( Component
   , runComponent
   , class IsBehavior
-  , text
-  , textB
   , toBehavior
   , modelView
   , merge
@@ -76,16 +74,6 @@ foreign import _list :: forall a b o.
 {--   toComponent = _text --}
 
 {-- instance toComponentBehavior :: forall a b. IsComponent a b => IsComponent Behavior (IsComponent a b) --}
-
-text :: String -> Component {} Unit
-text = _text
-
-foreign import _text :: String -> Component {} Unit
-
-textB :: forall a. Behavior String -> Component {} Unit
-textB = _textB
-
-foreign import _textB :: Behavior String -> Component {} Unit
 
 -- | Type class representing types that can be converted into a behavior.
 -- | Any type can be converted into a behavior with `pure a`. But only a few

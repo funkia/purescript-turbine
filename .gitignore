@@ -2,6 +2,7 @@ bower_components/
 node_modules/
 /.pulp-cache/
 output/
+bundle.js
 /generated-docs/
 /.psc-package/
 /.psc*

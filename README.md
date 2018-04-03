@@ -1,6 +1,11 @@
 # purescript-turbine
 
-Turbine is a purely functional frontend framework based on FRP.
+Turbine is a purely functional frontend framework powered by FRP.
+
+* Concise and powerful thanks to FRP.
+* No big global state/model. Everything is incapsulated in components.
+* Type-safe communication between views and models.
+* Model logic and view code is kept seperate for logic-less views.
 
 ## Examples
 
@@ -28,7 +33,7 @@ main = runComponent "#mount" (counter 0)
 ### List of counters
 
 Show a list of counters. New counters can be added to the list. Existing
-counters can be deleted. The sum of all the counters is shown.
+counters can be deleted. The aggregated sum of all the counters is shown.
 
 ![list of counters GIF](examples/counters/list-counter.gif)
 

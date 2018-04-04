@@ -7,7 +7,7 @@ import Counters.Version1 as Version1
 import Counters.Version2 as Version2
 import Data.Hareactive (Behavior, Stream, Now, sample, stepper)
 import Turbine (Component, runComponent, dynamic, output, modelView, (\>))
-import Turbine.HTML as E
+import Turbine.HTML.Elements as E
 
 data Version = One | Two
 

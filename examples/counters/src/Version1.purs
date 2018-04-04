@@ -13,7 +13,7 @@ import Data.Foldable (fold, foldr)
 import Data.Hareactive (Behavior, Stream, Now, sample, scan, scanS, switchStream)
 import Data.Monoid ((<>))
 import Turbine (Component, runComponent, output, modelView, (\>), list)
-import Turbine.HTML as E
+import Turbine.HTML.Elements as E
 
 type CounterOut = {count :: Behavior Int}
 type CounterViewOut = {increment :: Stream Unit, decrement :: Stream Unit}
@@ -26,7 +26,7 @@ counterModel {increment, decrement} id = do
 
 counterView :: CounterOut -> Component _ CounterViewOut
 counterView {count} =
-  E.div (
+  E.div_ (
     E.text "Counter " \>
     E.span (E.textB $ map show count) \>
     E.button "+" `output` (\o -> {increment: o.click}) \>

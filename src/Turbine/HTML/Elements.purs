@@ -1,6 +1,7 @@
-module Turbine.HTML
+module Turbine.HTML.Elements
   ( h1
   , div
+  , div_
   , br
   , text
   , textB
@@ -9,15 +10,38 @@ module Turbine.HTML
   , button
   ) where
 
-import Prelude (Unit, (<<<))
+import Data.Foldable (foldr)
+import Data.Function.Uncurried (Fn0, Fn2, Fn3, runFn0, runFn2, runFn3)
 import Data.Hareactive (Behavior, Stream)
+import Prelude (Unit, (<<<))
 import Turbine (Component)
-import Data.Function.Uncurried (Fn0, runFn0)
+import Turbine.HTML.Properties (Properties, Property(..))
 
-div :: forall a o. Component o a -> Component o o
-div = _div
+foreign import data JSProps :: Type
 
-foreign import _div :: forall a o. Component o a -> Component o o
+processProp :: Property -> JSProps -> JSProps
+processProp p props = case p of
+  Attribute n m -> runFn3 handleAttribute n m props
+  Class n -> runFn2 handleClass n props
+
+processProps :: Properties -> JSProps
+processProps = foldr processProp (runFn0 mkProps)
+
+-- These `handle*` functions actually mutate the `JSProps` argument. Oh well.
+
+foreign import mkProps :: Fn0 JSProps
+
+foreign import handleAttribute :: Fn3 String String JSProps JSProps
+
+foreign import handleClass :: Fn2 String JSProps JSProps
+
+div :: forall a o. Properties -> Component o a -> Component o o
+div = runFn2 _div <<< processProps
+
+div_ :: forall a o. Component o a -> Component o o
+div_ = runFn2 _div (runFn0 mkProps)
+
+foreign import _div :: forall a o. Fn2 JSProps (Component o a) (Component o o)
 
 span :: forall a o. Component o a -> Component o o
 span = _span
@@ -37,7 +61,7 @@ text = _text
 
 foreign import _text :: String -> Component {} Unit
 
-textB :: forall a. Behavior String -> Component {} Unit
+textB :: Behavior String -> Component {} Unit
 textB = _textB
 
 foreign import _textB :: Behavior String -> Component {} Unit

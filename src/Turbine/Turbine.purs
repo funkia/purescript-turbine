@@ -40,10 +40,6 @@ foreign import _apply :: forall o a b. Fn2 (Component o (a -> b)) (Component o a
 instance semigroupComponent :: Semigroup a => Semigroup (Component o a) where
   append = lift2 append
 
-{-- instance monoidComponent :: Monoid a => Monoid (Component a) where --}
-{--   mempty = pure mempty --}
-
-
 modelView :: forall o a b c. (a -> b -> Now c) -> (c -> Component o a) -> (b -> Component {} c)
 modelView m v = runFn2 _modelView (mkFn2 m) v
 
@@ -82,7 +78,6 @@ merge :: forall a o b p q. Union o p q => Component { | o } a -> Component { | p
 merge = runFn2 _merge
 
 foreign import _merge :: forall a o b p q. Union o p q => Fn2 (Component { | o } a) (Component { | p } b) (Component { | q } { | q })
-
 infixl 0 merge as \>
 
 output :: forall a o p q. Union o p q => Component { | o } a -> (a -> { | p }) -> Component { | q } a

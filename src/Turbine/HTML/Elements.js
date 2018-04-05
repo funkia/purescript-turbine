@@ -1,6 +1,6 @@
 var T = require('@funkia/turbine');
 
-exports._noProps = {};
+exports.noProps = {};
 
 exports.mkProps = function() {
   return {};
@@ -29,6 +29,8 @@ exports._div = T.elements.div;
 exports._input = T.elements.input;
 
 exports._a = T.elements.a;
+
+exports._p = T.elements.p;
 
 exports._button = T.elements.button;
 

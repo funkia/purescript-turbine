@@ -25,9 +25,7 @@ type AppModelOut = {isValid :: Behavior Boolean}
 type AppViewOut = {email :: Behavior String}
 
 appModel :: AppViewOut -> Unit -> Now AppModelOut
-appModel {email} _ = do
-  let isValid = isValidEmail <$> email
-  pure {isValid}
+appModel {email} _ = pure {isValid: isValidEmail <$> email}
 
 appView :: AppModelOut -> Component _ AppViewOut
 appView {isValid} =

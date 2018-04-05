@@ -25,7 +25,7 @@ import Turbine.HTML.Properties (Properties, Property(..))
 foreign import data JSProps :: Type
 
 processProp :: Property -> JSProps -> JSProps
-processProp p props = case p of
+processProp prop props = case prop of
   Attribute n m -> runFn3 handleAttribute n m props
   Class n -> runFn2 handleClass n props
 

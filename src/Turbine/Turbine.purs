@@ -11,15 +11,13 @@ module Turbine
   , list
   ) where
 
-import Control.Applicative (class Applicative, liftA1, pure)
+import Control.Applicative (pure)
 import Control.Apply (class Apply, lift2)
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Uncurried (EffFn2, runEffFn2)
 import DOM (DOM)
 import Data.Function.Uncurried (Fn2, runFn2, mkFn2, Fn3, runFn3)
 import Data.Hareactive (Behavior, Now)
-import Data.Monoid (class Monoid, mempty)
-import Data.Record.Builder as B
 import Data.Semigroup (class Semigroup, append)
 import Prelude (class Applicative, class Apply, class Bind, class Functor, class Monad, class Semigroup, class Show, Unit, bind, id, map, show, unit, (<<<))
 
@@ -27,18 +25,23 @@ foreign import data Component :: Type -> Type -> Type
 
 -- Component instances
 
-foreign import _map :: forall o a b. Fn2 (a -> b) (Component o a) (Component o b)
+instance semigroupComponent :: Semigroup a => Semigroup (Component o a) where
+  append = lift2 append
 
 instance functorComponent :: Functor (Component o) where
   map = runFn2 _map
+
+foreign import _map :: forall o a b. Fn2 (a -> b) (Component o a) (Component o b)
 
 instance applyComponent :: Apply (Component o) where
   apply = runFn2 _apply
 
 foreign import _apply :: forall o a b. Fn2 (Component o (a -> b)) (Component o a) (Component o b)
 
-instance semigroupComponent :: Semigroup a => Semigroup (Component o a) where
-  append = lift2 append
+instance bindComponent :: Bind (Component o) where
+  bind = runFn2 _bind
+
+foreign import _bind :: forall o a b. Fn2 (Component o a) (a -> Component o b) (Component o b)
 
 modelView :: forall o a b c. (a -> b -> Now c) -> (c -> Component o a) -> (b -> Component {} c)
 modelView m v = runFn2 _modelView (mkFn2 m) v

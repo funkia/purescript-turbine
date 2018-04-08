@@ -13,6 +13,7 @@ module Turbine.HTML.Elements
   , input
   , input_
   , button
+  , button_
   ) where
 
 import Data.Foldable (foldr)
@@ -103,8 +104,10 @@ foreign import _input :: Fn1 JSProps (Component {} InputOut)
 
 type ButtonOut = {click :: Stream Unit}
 
-button :: String -> Component {} ButtonOut
-button = _button
+button :: forall o a. Properties -> Component o a -> Component o ButtonOut
+button = runFn2 _button <<< processProps
 
-foreign import _button :: String -> Component {} ButtonOut
+button_ :: forall o a. Component o a -> Component o ButtonOut
+button_ = runFn2 _button (runFn0 mkProps)
 
+foreign import _button :: forall o a. Fn2 JSProps (Component o a) (Component o ButtonOut)

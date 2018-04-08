@@ -1,5 +1,5 @@
 {
-  "name": "purescript-turbine",
+  "name": "turbine-purescript-test",
   "ignore": [
     "**/.*",
     "node_modules",
@@ -9,14 +9,17 @@
   "dependencies": {
     "purescript-prelude": "^3.2.0",
     "purescript-console": "^3.0.0",
-    "purescript-dom": "^4.15.0",
     "purescript-functions": "^3.0.0",
+    "purescript-dom": "^4.15.0",
     "purescript-monoid": "^3.3.0",
     "purescript-record": "^0.2.6",
-    "purescript-arrays": "^4.3.0",
-    "purescript-hareactive": "^0.0.2"
+    "purescript-strings": "^3.5.0",
+    "purescript-js-date": "^5.2.0"
   },
   "devDependencies": {
     "purescript-psci-support": "^3.0.0"
+  },
+  "resolutions": {
+    "purescript-js-date": "^5.2.0"
   }
 }

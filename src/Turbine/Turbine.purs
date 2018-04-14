@@ -5,7 +5,7 @@ module Turbine
   , toBehavior
   , modelView
   , merge
-  , (\>)
+  , (</>)
   , dynamic
   , output
   , list
@@ -81,7 +81,7 @@ merge :: forall a o b p q. Union o p q => Component { | o } a -> Component { | p
 merge = runFn2 _merge
 
 foreign import _merge :: forall a o b p q. Union o p q => Fn2 (Component { | o } a) (Component { | p } b) (Component { | q } { | q })
-infixl 0 merge as \>
+infixl 0 merge as </>
 
 output :: forall a o p q. Union o p q => Component { | o } a -> (a -> { | p }) -> Component { | q } a
 output = runFn2 _output

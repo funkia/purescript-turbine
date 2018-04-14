@@ -12,7 +12,7 @@ import Data.Array (cons, filter)
 import Data.Foldable (fold, foldr)
 import Data.Hareactive (Behavior, Stream, Now, sample, scan, scanS, switchStream)
 import Data.Monoid ((<>))
-import Turbine (Component, runComponent, output, modelView, (\>), list)
+import Turbine (Component, runComponent, output, modelView, (</>), list)
 import Turbine.HTML.Elements as E
 
 type CounterOut = {count :: Behavior Int}
@@ -27,9 +27,9 @@ counterModel {increment, decrement} id = do
 counterView :: CounterOut -> Component _ CounterViewOut
 counterView {count} =
   E.div_ (
-    E.text "Counter " \>
-    E.span (E.textB $ map show count) \>
-    E.button "+" `output` (\o -> {increment: o.click}) \>
+    E.text "Counter " </>
+    E.span (E.textB $ map show count) </>
+    E.button "+" `output` (\o -> {increment: o.click}) </>
     E.button "-" `output` (\o -> {decrement: o.click})
   )
 

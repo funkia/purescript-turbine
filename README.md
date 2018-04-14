@@ -20,9 +20,9 @@ counterModel {increment, decrement} init = do
   pure {count}
 
 counterView {count} =
-  E.text "Counter " \>
-  E.span (E.textB $ map show count) \>
-  E.button "+" `output` (\o -> {increment: o.click}) \>
+  E.text "Counter " </>
+  E.span (E.textB $ map show count) </>
+  E.button "+" `output` (\o -> {increment: o.click}) </>
   E.button "-" `output` (\o -> {decrement: o.click})
 
 counter = modelView counterModel counterView
@@ -45,10 +45,10 @@ counterModel {increment, decrement, delete} id = do
 
 counterView {count} =
   E.div (
-    E.text "Counter" \>
-    E.span (E.textB $ map show count) \>
-    E.button "+" `output` (\o -> {increment: o.click}) \>
-    E.button "-" `output` (\o -> {decrement: o.click}) \>
+    E.text "Counter" </>
+    E.span (E.textB $ map show count) </>
+    E.button "+" `output` (\o -> {increment: o.click}) </>
+    E.button "-" `output` (\o -> {decrement: o.click}) </>
     E.button "x" `output` (\o -> {delete: o.click})
   )
 
@@ -68,9 +68,9 @@ counterListModel {addCounter, listOut} init = do
 
 counterListView {sum, counterIds} =
   E.div (
-    E.h1 (E.text "Counters") \>
-    E.span (E.textB (map (\n -> "Sum " <> show n) sum)) \>
-    E.button "Add counter" `output` (\o -> {addCounter: o.click}) \>
+    E.h1 (E.text "Counters") </>
+    E.span (E.textB (map (\n -> "Sum " <> show n) sum)) </>
+    E.button "Add counter" `output` (\o -> {addCounter: o.click}) </>
     list counter counterIds id `output` (\o -> {listOut: o})
   )
 

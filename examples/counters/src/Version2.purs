@@ -12,7 +12,7 @@ import Data.Array (cons, filter)
 import Data.Foldable (fold, foldr)
 import Data.Hareactive (Behavior, Stream, Now, sample, scan, scanS, switchStream)
 import Data.Monoid ((<>))
-import Turbine (Component, runComponent, output, modelView, (\>), list)
+import Turbine (Component, runComponent, output, modelView, (</>), list)
 import Turbine.HTML.Elements as E
 import Turbine.HTML.Properties as P
 
@@ -35,10 +35,10 @@ counterModel {increment, decrement, delete} id = do
 counterView :: CounterOut -> Component _ CounterViewOut
 counterView {count} =
   E.div [P.class_ "foo bar"] (
-    E.text "Counter " \>
-    E.span (E.textB $ map show count) \>
-    E.button "+" `output` (\o -> {increment: o.click}) \>
-    E.button "-" `output` (\o -> {decrement: o.click}) \>
+    E.text "Counter " </>
+    E.span (E.textB $ map show count) </>
+    E.button "+" `output` (\o -> {increment: o.click}) </>
+    E.button "-" `output` (\o -> {decrement: o.click}) </>
     E.button "x" `output` (\o -> {delete: o.click})
   )
 
@@ -64,9 +64,9 @@ counterListModel {addCounter, listOut} init = do
 counterListView :: ListOut -> Component _ ListViewOut
 counterListView {sum, counterIds} =
   E.div_ (
-    E.h1 (E.text "Counters") \>
-    E.span (E.textB (map (\n -> "Sum " <> show n) sum)) \>
-    E.button "Add counter" `output` (\o -> {addCounter: o.click}) \>
+    E.h1 (E.text "Counters") </>
+    E.span (E.textB (map (\n -> "Sum " <> show n) sum)) </>
+    E.button "Add counter" `output` (\o -> {addCounter: o.click}) </>
     list counter counterIds id `output` (\o -> {listOut: o})
   )
 

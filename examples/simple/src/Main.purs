@@ -8,7 +8,7 @@ import Data.Hareactive (Behavior, Stream, Now, sample, stepper)
 import Data.String.Regex (Regex, regex, test)
 import Data.String.Regex.Flags (ignoreCase)
 import Partial.Unsafe (unsafePartial)
-import Turbine (Component, runComponent, dynamic, output, modelView, (\>))
+import Turbine (Component, runComponent, dynamic, output, modelView, (</>))
 import Turbine.HTML.Elements as E
 
 emailRegex :: Regex
@@ -29,10 +29,10 @@ appModel {email} _ = pure {isValid: isValidEmail <$> email}
 
 appView :: AppModelOut -> Component _ AppViewOut
 appView {isValid} =
-  E.h1_ $ E.text "Email validator" \>
-  E.input_ `output` (\o -> {email: o.inputValue}) \>
+  E.h1_ $ E.text "Email validator" </>
+  E.input_ `output` (\o -> {email: o.inputValue}) </>
   E.p_ (
-    E.text "Email is " \>
+    E.text "Email is " </>
     E.textB (validToString <$> isValid)
   )
 

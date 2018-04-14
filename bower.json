@@ -13,7 +13,8 @@
     "purescript-functions": "^3.0.0",
     "purescript-monoid": "^3.3.0",
     "purescript-record": "^0.2.6",
-    "purescript-arrays": "^4.3.0"
+    "purescript-arrays": "^4.3.0",
+    "purescript-hareactive": "^0.0.2"
   },
   "devDependencies": {
     "purescript-psci-support": "^3.0.0"

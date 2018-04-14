@@ -6,7 +6,7 @@ import Control.Monad.Eff (Eff)
 import Counters.Version1 as Version1
 import Counters.Version2 as Version2
 import Data.Hareactive (Behavior, Stream, Now, sample, stepper)
-import Turbine (Component, runComponent, dynamic, output, modelView, (\>))
+import Turbine (Component, runComponent, dynamic, output, modelView, (</>))
 import Turbine.HTML.Elements as E
 
 data Version = One | Two
@@ -29,8 +29,8 @@ type AppViewOut =
 
 appView :: AppModelOut -> Component _ AppViewOut
 appView out =
-  E.button "Version 1" `output` (\o -> {selectVersion1: o.click $> One}) \>
-  E.button "Version 2" `output` (\o -> {selectVersion2: o.click $> Two}) \>
+  E.button "Version 1" `output` (\o -> {selectVersion1: o.click $> One}) </>
+  E.button "Version 2" `output` (\o -> {selectVersion2: o.click $> Two}) </>
   (dynamic out.version)
 
 app = modelView appModel appView unit

@@ -1,8 +1,6 @@
 module Turbine
   ( Component
   , runComponent
-  , class IsBehavior
-  , toBehavior
   , modelView
   , merge
   , (</>)
@@ -12,14 +10,14 @@ module Turbine
   ) where
 
 import Control.Applicative (pure)
-import Control.Apply (class Apply, lift2)
+import Control.Apply (lift2)
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Uncurried (EffFn2, runEffFn2)
 import DOM (DOM)
 import Data.Function.Uncurried (Fn2, runFn2, mkFn2, Fn3, runFn3)
 import Data.Hareactive (Behavior, Now)
-import Data.Semigroup (class Semigroup, append)
-import Prelude (class Applicative, class Apply, class Bind, class Functor, class Monad, class Semigroup, class Show, Unit, bind, id, map, show, unit, (<<<))
+import Data.Semigroup (append)
+import Prelude (class Apply, class Bind, class Functor, class Semigroup, Unit)
 
 foreign import data Component :: Type -> Type -> Type
 
@@ -43,10 +41,10 @@ instance bindComponent :: Bind (Component o) where
 
 foreign import _bind :: forall o a b. Fn2 (Component o a) (a -> Component o b) (Component o b)
 
-modelView :: forall o a b c. (a -> b -> Now c) -> (c -> Component o a) -> (b -> Component {} c)
+modelView :: forall o p a x. (o -> x -> Now p) -> (p -> Component o a) -> (x -> Component {} p)
 modelView m v = runFn2 _modelView (mkFn2 m) v
 
-foreign import _modelView :: forall o a b c. Fn2 (Fn2 a b (Now c)) (c -> Component o a) (b -> Component {} c)
+foreign import _modelView :: forall o p a x. Fn2 (Fn2 o x (Now p)) (p -> Component o a) (x -> Component {} p)
 
 runComponent :: forall o a eff. String -> Component o a -> Eff (dom :: DOM | eff) Unit
 runComponent = runEffFn2 _runComponent
@@ -61,21 +59,6 @@ list = runFn3 _list
 
 foreign import _list :: forall a b o.
   Fn3 (a -> Component o b) (Behavior (Array a)) (a -> Int) (Component {} (Behavior (Array b)))
-
--- | Type class representing types that can be converted into a behavior.
--- | Any type can be converted into a behavior with `pure a`. But only a few
--- | key types implement this type class in the cases where auto-lifting is
--- | particularly convenient.
-class IsBehavior a b | a -> b where
-  toBehavior :: a -> Behavior b
-
--- | Naturally a behavior can be converted to a behavior.
-instance isBehaviorBehavior :: IsBehavior (Behavior a) a where
-  toBehavior = id
-
--- | A string can be converted to a constant behavior of that string.
-instance isBehaviorString :: IsBehavior String String where
-  toBehavior = pure
 
 merge :: forall a o b p q. Union o p q => Component { | o } a -> Component { | p } b -> Component { | q } { | q }
 merge = runFn2 _merge

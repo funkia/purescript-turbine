@@ -21,14 +21,14 @@ import Data.Function.Uncurried (Fn0, Fn2, Fn3, Fn1, runFn0, runFn1, runFn2, runF
 import Data.Hareactive (Behavior, Stream)
 import Prelude (Unit, (<<<))
 import Turbine (Component)
-import Turbine.HTML.Properties (Properties, Property(..))
+import Turbine.HTML.Properties (Properties, Property(..), toValue)
 
 foreign import data JSProps :: Type
 
 processProp :: Property -> JSProps -> JSProps
 processProp prop props = case prop of
-  Attribute n m -> runFn3 handleAttribute n m props
-  Class n -> runFn2 handleClass n props
+  Attribute n m -> runFn3 handleAttribute n (toValue m) props
+  Class n -> runFn2 handleClass (toValue n) props
 
 processProps :: Properties -> JSProps
 processProps = foldr processProp (runFn0 mkProps)
@@ -39,9 +39,9 @@ foreign import mkProps :: Fn0 JSProps
 
 foreign import noProps :: JSProps
 
-foreign import handleAttribute :: Fn3 String String JSProps JSProps
+foreign import handleAttribute :: Fn3 String (Behavior String) JSProps JSProps
 
-foreign import handleClass :: Fn2 String JSProps JSProps
+foreign import handleClass :: Fn2 (Behavior String) JSProps JSProps
 
 div :: forall a o. Properties -> Component o a -> Component o o
 div = runFn2 _div <<< processProps

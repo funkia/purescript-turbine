@@ -7,7 +7,6 @@ import Prelude
 import Control.Apply (lift2)
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE, log)
-import DOM (DOM)
 import Data.Array (cons, filter)
 import Data.Foldable (fold, foldr)
 import Data.Hareactive (Behavior, Stream, Now, sample, scan, scanS, switchStream)
@@ -36,10 +35,10 @@ counterView :: CounterOut -> Component _ CounterViewOut
 counterView {count} =
   E.div [P.class_ "foo bar"] (
     E.text "Counter " </>
-    E.span (E.textB $ map show count) </>
-    E.button "+" `output` (\o -> {increment: o.click}) </>
-    E.button "-" `output` (\o -> {decrement: o.click}) </>
-    E.button "x" `output` (\o -> {delete: o.click})
+    E.span_ (E.textB $ map show count) </>
+    E.button_ (E.text "+") `output` (\o -> {increment: o.click}) </>
+    E.button_ (E.text "-") `output` (\o -> {decrement: o.click}) </>
+    E.button_ (E.text "x") `output` (\o -> {delete: o.click})
   )
 
 counter :: Int -> Component {} CounterOut
@@ -64,9 +63,9 @@ counterListModel {addCounter, listOut} init = do
 counterListView :: ListOut -> Component _ ListViewOut
 counterListView {sum, counterIds} =
   E.div_ (
-    E.h1 (E.text "Counters") </>
-    E.span (E.textB (map (\n -> "Sum " <> show n) sum)) </>
-    E.button "Add counter" `output` (\o -> {addCounter: o.click}) </>
+    E.h1_ (E.text "Counters") </>
+    E.span_ (E.textB (map (\n -> "Sum " <> show n) sum)) </>
+    E.button_ (E.text "Add counter") `output` (\o -> {addCounter: o.click}) </>
     list counter counterIds id `output` (\o -> {listOut: o})
   )
 

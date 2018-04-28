@@ -28,9 +28,9 @@ counterView :: CounterOut -> Component _ CounterViewOut
 counterView {count} =
   E.div_ (
     E.text "Counter " </>
-    E.span (E.textB $ map show count) </>
-    E.button "+" `output` (\o -> {increment: o.click}) </>
-    E.button "-" `output` (\o -> {decrement: o.click})
+    E.span_ (E.textB $ map show count) </>
+    E.button_ (E.text "+" ) `output` (\o -> {increment: o.click}) </>
+    E.button_ (E.text "-" ) `output` (\o -> {decrement: o.click})
   )
 
 counter :: Int -> Component {} CounterOut

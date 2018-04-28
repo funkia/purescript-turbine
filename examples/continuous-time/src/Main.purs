@@ -8,7 +8,7 @@ import Data.Array (head)
 import Data.Maybe (fromMaybe)
 import Data.String (split, Pattern(..))
 import Data.JSDate (fromTime, toTimeString)
-import Turbine (Component, runComponent, dynamic, output, modelView, (\>))
+import Turbine (Component, runComponent, dynamic, output, modelView, (</>))
 import Turbine.HTML.Elements as E
 
 formatTime :: Number -> String
@@ -31,9 +31,9 @@ appModel {snapClick} _ = do
 
 appView :: AppModelOut -> Component _ AppViewOut
 appView {message, time} =
-  E.h1_ (E.text "Continuous") \>
-  E.p_ (E.textB $ formatTime <$> time) \>
-  E.button_ (E.text "Click to snap time") `output` (\o -> {snapClick: o.click}) \>
+  E.h1_ (E.text "Continuous") </>
+  E.p_ (E.textB $ formatTime <$> time) </>
+  E.button_ (E.text "Click to snap time") `output` (\o -> {snapClick: o.click}) </>
   E.p_ (E.textB message)
 
 app = modelView appModel appView unit

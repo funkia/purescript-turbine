@@ -9,15 +9,14 @@ module Turbine
   , list
   ) where
 
-import Control.Applicative (pure)
 import Control.Apply (lift2)
-import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Uncurried (EffFn2, runEffFn2)
-import DOM (DOM)
+import Effect (Effect)
+import Effect.Uncurried (EffectFn2, runEffectFn2)
 import Data.Function.Uncurried (Fn2, runFn2, mkFn2, Fn3, runFn3)
 import Data.Hareactive (Behavior, Now)
 import Data.Semigroup (append)
 import Prelude (class Apply, class Bind, class Functor, class Semigroup, Unit)
+import Prim.Row (class Union)
 
 foreign import data Component :: Type -> Type -> Type
 
@@ -46,11 +45,13 @@ modelView m v = runFn2 _modelView (mkFn2 m) v
 
 foreign import _modelView :: forall o p a x. Fn2 (Fn2 o x (Now p)) (p -> Component o a) (x -> Component {} p)
 
-runComponent :: forall o a eff. String -> Component o a -> Eff (dom :: DOM | eff) Unit
-runComponent = runEffFn2 _runComponent
+runComponent :: forall o a. String -> Component o a -> Effect Unit
+runComponent = runEffectFn2 _runComponent
 
-foreign import _runComponent :: forall o a eff. EffFn2 (dom :: DOM | eff) String (Component o a) Unit
+foreign import _runComponent :: forall o a. EffectFn2 String (Component o a) Unit
 
+-- | Turns a behavior of a component into a component of a behavior.
+-- | This function is used to create dynamic HTML where the structure of the HTML should change over time.
 foreign import dynamic :: forall o a. Behavior (Component o a) -> Component {} (Behavior a)
 
 list :: forall a b o.

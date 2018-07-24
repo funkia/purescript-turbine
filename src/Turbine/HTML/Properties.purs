@@ -11,7 +11,7 @@ module Turbine.HTML.Properties
 
 -- | Type class to implement overloads for property values.
 import Data.Hareactive (Behavior)
-import Prelude (id, pure, (<<<))
+import Prelude (identity, pure, (<<<))
 
 {-- import Data.Array (Array) --}
 
@@ -25,7 +25,7 @@ instance propertyValueString :: PropertyValue String where
 
 -- | A behavior of a string be used as a property value.
 instance propertyValueBehavior :: PropertyValue (Behavior String) where
-  toValue = id
+  toValue = identity
 
 data Property
   = Attribute String (Behavior String)

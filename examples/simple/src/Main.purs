@@ -2,13 +2,13 @@ module Main where
 
 import Prelude
 
-import Control.Monad.Eff (Eff)
-import Data.Either (fromLeft, fromRight)
-import Data.Hareactive (Behavior, Stream, Now, sample, stepper)
+import Effect (Effect)
+import Data.Either (fromRight)
+import Data.Hareactive (Behavior, Now)
 import Data.String.Regex (Regex, regex, test)
 import Data.String.Regex.Flags (ignoreCase)
 import Partial.Unsafe (unsafePartial)
-import Turbine (Component, runComponent, dynamic, output, modelView, (</>))
+import Turbine (Component, runComponent, output, modelView, (</>))
 import Turbine.HTML.Elements as E
 
 emailRegex :: Regex
@@ -20,23 +20,24 @@ isValidEmail = test emailRegex
 validToString :: Boolean -> String
 validToString b = if b then "valid" else "invalid"
 
-type AppModelOut = {isValid :: Behavior Boolean}
+type AppModelOut = { isValid :: Behavior Boolean }
 
-type AppViewOut = {email :: Behavior String}
+type AppViewOut = { email :: Behavior String }
 
 appModel :: AppViewOut -> Unit -> Now AppModelOut
-appModel {email} _ = pure {isValid: isValidEmail <$> email}
+appModel {email} _ = pure { isValid: isValidEmail <$> email }
 
-appView :: AppModelOut -> Component _ AppViewOut
+appView :: AppModelOut -> Component AppViewOut AppViewOut
 appView {isValid} =
-  E.h1_ $ E.text "Email validator" </>
-  E.input_ `output` (\o -> {email: o.inputValue}) </>
+  E.h1_ (E.text "Email validator") </>
+  E.input_ `output` (\o -> { email: o.inputValue }) </>
   E.p_ (
     E.text "Email is " </>
     E.textB (validToString <$> isValid)
   )
 
+app :: Component {} { isValid :: Behavior Boolean }
 app = modelView appModel appView unit
 
-main :: Eff _ Unit
+main :: Effect Unit
 main = runComponent "#mount" app

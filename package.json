@@ -7,6 +7,8 @@
     "test": "test"
   },
   "scripts": {
+    "postinstall": "bower install",
+    "build": "pulp build",
     "test": "pulp test"
   },
   "repository": {

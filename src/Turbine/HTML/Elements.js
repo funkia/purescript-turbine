@@ -34,6 +34,8 @@ exports._p = T.elements.p;
 
 exports._button = T.elements.button;
 
+exports._label = T.elements.label;
+
 exports._text = T.text;
 
 exports._textB = T.dynamic;

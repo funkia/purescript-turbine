@@ -3,7 +3,7 @@ module Main where
 import Prelude
 
 import Control.Monad.Eff (Eff)
-import Data.Hareactive (Behavior, Stream, Now, time, sample, stepper, snapshot)
+import Hareactive (Behavior, Stream, Now, time, sample, stepper, snapshot)
 import Data.Array (head)
 import Data.Maybe (fromMaybe)
 import Data.String (split, Pattern(..))

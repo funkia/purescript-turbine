@@ -9,7 +9,7 @@ import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE, log)
 import Data.Array (cons, filter)
 import Data.Foldable (fold, foldr)
-import Data.Hareactive (Behavior, Stream, Now, sample, scan, scanS, switchStream)
+import Hareactive (Behavior, Stream, Now, sample, scan, scanS, switchStream)
 import Data.Monoid ((<>))
 import Turbine (Component, runComponent, output, modelView, (</>), list)
 import Turbine.HTML.Elements as E

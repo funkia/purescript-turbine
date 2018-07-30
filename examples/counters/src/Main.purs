@@ -5,7 +5,7 @@ import Prelude
 import Control.Monad.Eff (Eff)
 import Counters.Version1 as Version1
 import Counters.Version2 as Version2
-import Data.Hareactive (Behavior, Stream, Now, sample, stepper)
+import Hareactive (Behavior, Stream, Now, sample, stepper)
 import Turbine (Component, runComponent, dynamic, output, modelView, (</>))
 import Turbine.HTML.Elements as E
 

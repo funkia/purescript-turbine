@@ -14,11 +14,14 @@ module Turbine.HTML.Elements
   , input_
   , button
   , button_
+  , label
+  , label_
   ) where
 
+import Web.Event.Event (Event)
 import Data.Foldable (foldr)
 import Data.Function.Uncurried (Fn0, Fn2, Fn3, Fn1, runFn0, runFn1, runFn2, runFn3)
-import Data.Hareactive (Behavior, Stream)
+import Hareactive (Behavior, Stream)
 import Prelude (Unit, (<<<))
 import Turbine (Component)
 import Turbine.HTML.Properties (Properties, Property(..), toValue)
@@ -92,7 +95,10 @@ foreign import _a :: forall a o. Component o a -> Component o Unit
 
 foreign import br :: Component {} Unit
 
-type InputOut = {inputValue :: Behavior String}
+type InputOut =
+  { inputValue :: Behavior String
+  , input :: Stream Event
+  }
 
 input :: Properties -> Component {} InputOut
 input = runFn1 _input <<< processProps
@@ -111,3 +117,11 @@ button_ :: forall o a. Component o a -> Component o ButtonOut
 button_ = runFn2 _button (runFn0 mkProps)
 
 foreign import _button :: forall o a. Fn2 JSProps (Component o a) (Component o ButtonOut)
+
+label :: forall o a. Properties -> Component o a -> Component o {}
+label = runFn2 _label <<< processProps
+
+label_ :: forall o a. Component o a -> Component o {}
+label_ = runFn2 _label (runFn0 mkProps)
+
+foreign import _label :: forall o a. Fn2 JSProps (Component o a) (Component o {})

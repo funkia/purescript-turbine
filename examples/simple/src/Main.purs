@@ -4,7 +4,7 @@ import Prelude
 
 import Effect (Effect)
 import Data.Either (fromRight)
-import Data.Hareactive (Behavior, Now)
+import Hareactive (Behavior, Now)
 import Data.String.Regex (Regex, regex, test)
 import Data.String.Regex.Flags (ignoreCase)
 import Partial.Unsafe (unsafePartial)

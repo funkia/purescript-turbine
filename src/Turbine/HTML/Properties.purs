@@ -7,8 +7,8 @@ module Turbine.HTML.Properties
   , toValue
   ) where
 
-import Prelude (class Show, show, map, pure, (<<<))
 import Hareactive (Behavior)
+import Prelude (identity, map, pure, show, (<<<))
 
 {-- import Data.Array (Array) --}
 
@@ -20,8 +20,16 @@ class PropertyValue a where
 instance propertyValueString :: PropertyValue String where
   toValue = pure
 
--- | A behavior of something that can be show can be used as a property value.
-instance propertyValueBehavior :: Show a => PropertyValue (Behavior a) where
+-- | A number can be used as a property value.
+instance propertyValueNumber :: PropertyValue Number where
+  toValue = pure <<< show
+
+-- | A behavior of a string can be used as a property value.
+instance propertyValueBehaviorString :: PropertyValue (Behavior String) where
+  toValue = identity
+
+-- | A behavior of a number can be used as a property value.
+instance propertyValueBehaviorNumber :: PropertyValue (Behavior Number) where
   toValue = map show
 
 data Property

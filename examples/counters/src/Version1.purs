@@ -5,9 +5,6 @@ module Counters.Version1
 import Prelude
 
 import Control.Apply (lift2)
-import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Console (CONSOLE, log)
-import DOM (DOM)
 import Data.Array (cons, filter)
 import Data.Foldable (fold, foldr)
 import Hareactive (Behavior, Stream, Now, sample, scan, scanS, switchStream)
@@ -19,18 +16,18 @@ type CounterOut = {count :: Behavior Int}
 type CounterViewOut = {increment :: Stream Unit, decrement :: Stream Unit}
 
 counterModel :: CounterViewOut -> Int -> Now CounterOut
-counterModel {increment, decrement} id = do
+counterModel { increment, decrement } id = do
   let changes = (increment $> 1) <> (decrement $> -1)
   count <- sample $ scan (+) 0 changes
-  pure {count}
+  pure { count }
 
 counterView :: CounterOut -> Component _ CounterViewOut
 counterView {count} =
   E.div_ (
     E.text "Counter " </>
     E.span_ (E.textB $ map show count) </>
-    E.button_ (E.text "+" ) `output` (\o -> {increment: o.click}) </>
-    E.button_ (E.text "-" ) `output` (\o -> {decrement: o.click})
+    E.button_ (E.text "+" ) `output` (\o -> { increment: o.click }) </>
+    E.button_ (E.text "-" ) `output` (\o -> { decrement: o.click })
   )
 
 counter :: Int -> Component {} CounterOut

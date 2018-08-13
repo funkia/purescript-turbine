@@ -19,56 +19,17 @@ module Turbine.HTML.Elements
   , class Subrow
   ) where
 
-import Prelude
+import Prelude hiding (div)
 
 import Data.Function.Uncurried (Fn2, Fn1, runFn1, runFn2)
-import Data.Symbol (class IsSymbol, SProxy(SProxy))
 import Hareactive (Behavior, Stream)
 import Prim.Row (class Union)
-import Prim.Row as Row
-import Prim.RowList as RL
-import Record as R
-import Record.Builder (Builder)
-import Record.Builder as Builder
 import Turbine (Component)
-import Type.Data.RowList (RLProxy(RLProxy))
 import Web.Event.Event (Event)
 
 class Subrow (r :: # Type) (s :: # Type)
 
 instance subrow :: Union r t s => Subrow r s
-
-mapHeterogenousRecord :: forall row xs f row'
-   . RL.RowToList row xs
-  => MapRecord xs row f () row'
-  => (forall a. a -> f a)
-  -> Record row
-  -> Record row'
-mapHeterogenousRecord f r = Builder.build builder {}
-  where
-    builder = mapRecordBuilder (RLProxy :: RLProxy xs) f r
-
-class MapRecord (xs :: RL.RowList) (row :: # Type) f (from :: # Type) (to :: # Type)
-  | xs -> row f from to where
-  mapRecordBuilder :: RLProxy xs -> (forall a. a -> f a) -> Record row -> Builder { | from } { | to }
-
-instance mapRecordCons ::
-  ( IsSymbol name
-  , Row.Cons name a trash row
-  , MapRecord tail row f from from'
-  , Row.Lacks name from'
-  , Row.Cons name (f a) from' to
-  ) => MapRecord (RL.Cons name a tail) row f from to where
-  mapRecordBuilder _ f r =
-    first <<< rest
-    where
-      nameP = SProxy :: SProxy name
-      val = f $ R.get nameP r
-      rest = mapRecordBuilder (RLProxy :: RLProxy tail) f r
-      first = Builder.insert nameP val
-
-instance mapRecordNil :: MapRecord RL.Nil row f () () where
-  mapRecordBuilder _ _ _ = identity
 
 -- Elements
 

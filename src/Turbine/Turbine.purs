@@ -7,16 +7,26 @@ module Turbine
   , dynamic
   , output
   , list
+  , class MapRecord
+  , mapRecordBuilder
+  , static
   ) where
 
+import Prelude
+
 import Control.Apply (lift2)
+import Data.Function.Uncurried (Fn2, runFn2, mkFn2, Fn3, runFn3)
+import Data.Symbol (class IsSymbol, SProxy(SProxy))
 import Effect (Effect)
 import Effect.Uncurried (EffectFn2, runEffectFn2)
-import Data.Function.Uncurried (Fn2, runFn2, mkFn2, Fn3, runFn3)
 import Hareactive (Behavior, Now)
-import Data.Semigroup (append)
-import Prelude (class Apply, class Bind, class Functor, class Semigroup, Unit)
 import Prim.Row (class Union)
+import Prim.Row as Row
+import Prim.RowList as RL
+import Record as R
+import Record.Builder (Builder)
+import Record.Builder as Builder
+import Type.Data.RowList (RLProxy(RLProxy))
 
 foreign import data Component :: Type -> Type -> Type
 
@@ -74,3 +84,37 @@ foreign import _output :: forall a o p q. Union o p q => Fn2 (Component { | o } 
 
 foreign import loop :: forall a o. (a -> Component o a) -> Component o a
 
+mapHeterogenousRecord :: forall row xs f row'
+   . RL.RowToList row xs
+  => MapRecord xs row f () row'
+  => (forall a. a -> f a)
+  -> Record row
+  -> Record row'
+mapHeterogenousRecord f r = Builder.build builder {}
+  where
+    builder = mapRecordBuilder (RLProxy :: RLProxy xs) f r
+
+class MapRecord (xs :: RL.RowList) (row :: # Type) f (from :: # Type) (to :: # Type)
+  | xs -> row f from to where
+  mapRecordBuilder :: RLProxy xs -> (forall a. a -> f a) -> Record row -> Builder { | from } { | to }
+
+instance mapRecordCons ::
+  ( IsSymbol name
+  , Row.Cons name a trash row
+  , MapRecord tail row f from from'
+  , Row.Lacks name from'
+  , Row.Cons name (f a) from' to
+  ) => MapRecord (RL.Cons name a tail) row f from to where
+  mapRecordBuilder _ f r =
+    first <<< rest
+    where
+      nameP = SProxy :: SProxy name
+      val = f $ R.get nameP r
+      rest = mapRecordBuilder (RLProxy :: RLProxy tail) f r
+      first = Builder.insert nameP val
+
+instance mapRecordNil :: MapRecord RL.Nil row f () () where
+  mapRecordBuilder _ _ _ = identity
+
+static :: forall a f c row. RL.RowToList row c => MapRecord c row f () a => Applicative f => { | row } -> { | a }
+static = mapHeterogenousRecord pure

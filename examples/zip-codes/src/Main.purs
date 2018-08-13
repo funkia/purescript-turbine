@@ -19,7 +19,7 @@ import Network.HTTP.Affjax.Response as AXRes
 import Network.HTTP.StatusCode (StatusCode(..))
 import Data.String.Regex (Regex, regex, test)
 import Data.String.Regex.Flags (ignoreCase)
-import Turbine (Component, modelView, output, runComponent, (</>))
+import Turbine (Component, modelView, output, runComponent, (</>), static)
 import Turbine.HTML.Elements as E
 
 type AppModelOut =
@@ -42,9 +42,10 @@ fetchZip :: String -> Aff String
 fetchZip zipCode = do
   res <- AX.get AXRes.json (apiUrl <> zipCode)
   liftEffect $ log $ "GET, status: " <> show res.status <> ", response: " <> J.stringify res.response
-  pure if res.status == StatusCode 404
-       then "Zip code does not exist"
-       else "Valid zip code for " <> "Foo"
+  pure
+    if res.status == StatusCode 404
+    then "Zip code does not exist"
+    else "Valid zip code for " <> "Foo"
 
 zipModel { zipCode } _ = do
   let
@@ -62,7 +63,7 @@ zipModel { zipCode } _ = do
 zipView { status } =
   E.div_ (
     E.span_ (E.text "Please type a valid US zip code: ") </>
-    E.input { placeholder: pure "Zip code" } `output` (\o -> { zipCode: o.inputValue }) </>
+    E.input (static { placeholder: "Zip code" }) `output` (\o -> { zipCode: o.inputValue }) </>
     E.br </>
     E.span_ (E.textB status)
   )

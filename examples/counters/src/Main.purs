@@ -20,7 +20,7 @@ type AppModelOut = {version :: Behavior (Component {} {})}
 appModel :: AppViewOut -> Unit -> Now AppModelOut
 appModel input _ = do
   version <- sample $ stepper One (input.selectVersion1 <> input.selectVersion2)
-  pure {version: versionToComponent <$> version}
+  pure { version: versionToComponent <$> version }
 
 type AppViewOut =
   { selectVersion1 :: Stream Version

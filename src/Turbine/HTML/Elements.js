@@ -1,40 +1,36 @@
 var T = require('@funkia/turbine');
 
-exports.noProps = {};
+exports._h1 = function() {
+    return T.elements.h1;
+};
 
-exports.mkProps = function() {
-  return {};
-}
+exports._span = function() {
+    return T.elements.span;
+};
 
-exports.handleAttribute = function(name, value, props) {
-  if (props.attrs === undefined) {
-    props.attrs = {};
-  }
-  props.attrs[name] = value;
-  return props;
-}
+exports._div = function() {
+    return T.elements.div;
+};
 
-exports.handleClass = function(value, props) {
-  props.class = value;
-  console.log(props);
-  return props;
-}
+exports._input = function() {
+  return T.elements.input;
+};
 
-exports._h1 = T.elements.h1;
+exports._a = function() {
+    return T.elements.a;
+};
 
-exports._span = T.elements.span;
+exports._p = function() {
+    return T.elements.p;
+};
 
-exports._div = T.elements.div;
+exports._button = function() {
+    return T.elements.button;
+};
 
-exports._input = T.elements.input;
-
-exports._a = T.elements.a;
-
-exports._p = T.elements.p;
-
-exports._button = T.elements.button;
-
-exports._label = T.elements.label;
+exports._label = function() {
+    return T.elements.label;
+};
 
 exports._text = T.text;
 

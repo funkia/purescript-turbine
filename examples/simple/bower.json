@@ -16,6 +16,6 @@
   },
   "devDependencies": {
     "purescript-psci-support": "^4.0.0",
-    "purescript-hareactive": "^0.0.3"
+    "purescript-hareactive": "^0.0.4"
   }
 }

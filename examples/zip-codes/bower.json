@@ -1,5 +1,5 @@
 {
-  "name": "example-simple",
+  "name": "example-zip-codes",
   "ignore": [
     "**/.*",
     "node_modules",
@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "purescript-psci-support": "^4.0.0",
-    "purescript-hareactive": "^0.0.3",
+    "purescript-hareactive": "^0.0.4",
     "purescript-web-events": "^1.0.0",
     "purescript-numbers": "^6.0.0",
     "purescript-affjax": "^6.0.0",

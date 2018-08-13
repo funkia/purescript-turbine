@@ -21,7 +21,6 @@ import Data.String.Regex (Regex, regex, test)
 import Data.String.Regex.Flags (ignoreCase)
 import Turbine (Component, modelView, output, runComponent, (</>))
 import Turbine.HTML.Elements as E
-import Turbine.HTML.Properties as P
 
 type AppModelOut =
   { status :: Behavior String
@@ -63,7 +62,7 @@ zipModel { zipCode } _ = do
 zipView { status } =
   E.div_ (
     E.span_ (E.text "Please type a valid US zip code: ") </>
-    E.input [ P.attribute "placeholder" "Zip code" ] `output` (\o -> { zipCode: o.inputValue }) </>
+    E.input { placeholder: pure "Zip code" } `output` (\o -> { zipCode: o.inputValue }) </>
     E.br </>
     E.span_ (E.textB status)
   )

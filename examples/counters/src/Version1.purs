@@ -32,6 +32,3 @@ counterView {count} =
 
 counter :: Int -> Component {} CounterOut
 counter = modelView counterModel counterView
-
-main :: forall e. Eff _ Unit
-main = runComponent "#mount" (counter 0)

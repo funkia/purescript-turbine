@@ -5,15 +5,11 @@ module Counters.Version2
 import Prelude
 
 import Control.Apply (lift2)
-import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Console (CONSOLE, log)
 import Data.Array (cons, filter)
 import Data.Foldable (fold, foldr)
 import Hareactive (Behavior, Stream, Now, sample, scan, scanS, switchStream)
-import Data.Monoid ((<>))
-import Turbine (Component, runComponent, output, modelView, (</>), list)
+import Turbine (Component, list, modelView, output, static, (</>))
 import Turbine.HTML.Elements as E
-import Turbine.HTML.Properties as P
 
 type CounterOut =
   { count :: Behavior Int
@@ -31,9 +27,9 @@ counterModel {increment, decrement, delete} id = do
   count <- sample $ scan (+) 0 changes
   pure {count, delete: delete $> id}
 
-counterView :: CounterOut -> Component _ CounterViewOut
+counterView :: CounterOut -> Component CounterViewOut CounterViewOut
 counterView {count} =
-  E.div [P.class_ "foo bar"] (
+  E.div (static { class: "foo bar" }) (
     E.text "Counter " </>
     E.span_ (E.textB $ map show count) </>
     E.button_ (E.text "+") `output` (\o -> {increment: o.click}) </>
@@ -66,7 +62,7 @@ counterListView {sum, counterIds} =
     E.h1_ (E.text "Counters") </>
     E.span_ (E.textB (map (\n -> "Sum " <> show n) sum)) </>
     E.button_ (E.text "Add counter") `output` (\o -> {addCounter: o.click}) </>
-    list counter counterIds id `output` (\o -> {listOut: o})
+    list counter counterIds identity `output` (\o -> {listOut: o})
   )
 
 counterList = modelView counterListModel counterListView

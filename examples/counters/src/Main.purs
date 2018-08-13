@@ -2,7 +2,7 @@ module Main where
 
 import Prelude
 
-import Control.Monad.Eff (Eff)
+import Effect (Effect)
 import Counters.Version1 as Version1
 import Counters.Version2 as Version2
 import Hareactive (Behavior, Stream, Now, sample, stepper)
@@ -27,21 +27,13 @@ type AppViewOut =
   , selectVersion2 :: Stream Version
   }
 
-view :: { loggedIn :: Behavior Boolean } -> Component _ _
-view { loggedIn } =
-  let
-    comp true = E.button_ (E.text "lol")
-    comp false = E.span_ (E.text "lol")
-  in
-    E.div_ (dynamic (map comp loggedIn))
-
 appView :: AppModelOut -> Component _ AppViewOut
 appView out =
-  E.button_ (E.text "Version 1") `output` (\o -> {selectVersion1: o.click $> One}) </>
-  E.button_ (E.text "Version 2") `output` (\o -> {selectVersion2: o.click $> Two}) </>
+  E.button_ (E.text "Version 1") `output` (\o -> { selectVersion1: o.click $> One }) </>
+  E.button_ (E.text "Version 2") `output` (\o -> { selectVersion2: o.click $> Two }) </>
   (dynamic out.version)
 
 app = modelView appModel appView unit
 
-main :: Eff _ Unit
+main :: Effect Unit
 main = runComponent "#mount" app

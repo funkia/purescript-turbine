@@ -71,12 +71,20 @@ list = runFn3 _list
 foreign import _list :: forall a o p.
   Fn3 (a -> Component o p) (Behavior (Array a)) (a -> Int) (Component {} (Behavior (Array o)))
 
+-- | Combines two components and merges their explicit output.
 merge :: forall a o b p q. Union o p q => Component { | o } a -> Component { | p } b -> Component { | q } { | q }
 merge = runFn2 _merge
 
 foreign import _merge :: forall a o b p q. Union o p q => Fn2 (Component { | o } a) (Component { | p } b) (Component { | q } { | q })
 infixl 0 merge as </>
 
+-- | Copies non-explicit output into explicit output.
+-- |
+-- | This function is often used in infix form as in the following example.
+-- |
+-- | ```purescript
+-- | button (text "Fire missiles!") `output` (\o -> { fireMissiles })
+-- | ```
 output :: forall a o p q. Union o p q => Component { | o } a -> (a -> { | p }) -> Component { | q } a
 output = runFn2 _output
 
@@ -116,9 +124,37 @@ instance mapRecordCons ::
 instance mapRecordNil :: MapRecord RL.Nil row f () () where
   mapRecordBuilder _ _ _ = identity
 
+-- | A helper function used to convert static values in records into constant
+-- | behaviors.
+-- |
+-- | Component functions often takes a large amount of behaviors as input. But,
+-- | sometimes all that is required is static values, that is, constant
+-- | behaviors. In these cases it can sometimes be tedious to write records like
+-- | the following:
+-- |
+-- | ```purescript
+-- | { foo: pure 1, bar: pure 2, baz: pure 3, more: pure 4, fields: pure 5 }
+-- | ```
+-- |
+-- | The `static` function applies `pure` to each value in the given record. As
+-- | such, the above can be shortened into the following.
+-- |
+-- | ```purescript
+-- | static { foo: 1, bar: 2, baz: 3, more: 4, fields: 5 }
+-- | ```
 static :: forall a c row. RL.RowToList row c => MapRecord c row Behavior () a => { | row } -> { | a }
 static = mapHeterogenousRecord pure
 
+-- | A function closely related to `static`. Usefull in cases where a component
+-- | function is to be supplied with both a set of static values (constant
+-- | behaviors). The function applies `static` to its seconds argument and
+-- | merges the two records.
+-- |
+-- | It is often used in infix form as in the following example.
+-- |
+-- | ```purescript
+-- | { foo: behA, bar: behB } `withStatic` { baz: 3, more: 4, fields: 5 }
+-- | ```
 withStatic :: forall o p q q' p' xs
    . RL.RowToList p xs
   => MapRecord xs p Behavior () p'

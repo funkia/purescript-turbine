@@ -116,5 +116,13 @@ instance mapRecordCons ::
 instance mapRecordNil :: MapRecord RL.Nil row f () () where
   mapRecordBuilder _ _ _ = identity
 
-static :: forall a f c row. RL.RowToList row c => MapRecord c row f () a => Applicative f => { | row } -> { | a }
+static :: forall a c row. RL.RowToList row c => MapRecord c row Behavior () a => { | row } -> { | a }
 static = mapHeterogenousRecord pure
+
+withStatic :: forall o p q q' p' xs
+   . RL.RowToList p xs
+  => MapRecord xs p Behavior () p'
+  => Union o p' q'
+  => Row.Nub q' q
+  => { | o } -> { | p } -> { | q }
+withStatic a b = R.merge a (static b)

@@ -64,12 +64,12 @@ foreign import _runComponent :: forall o a. EffectFn2 String (Component o a) Uni
 -- | This function is used to create dynamic HTML where the structure of the HTML should change over time.
 foreign import dynamic :: forall o a. Behavior (Component o a) -> Component {} (Behavior a)
 
-list :: forall a b o.
-  (a -> Component o b) -> Behavior (Array a) -> (a -> Int) -> Component {} (Behavior (Array b))
+list :: forall a o p.
+  (a -> Component o p) -> Behavior (Array a) -> (a -> Int) -> Component {} (Behavior (Array o))
 list = runFn3 _list
 
-foreign import _list :: forall a b o.
-  Fn3 (a -> Component o b) (Behavior (Array a)) (a -> Int) (Component {} (Behavior (Array b)))
+foreign import _list :: forall a o p.
+  Fn3 (a -> Component o p) (Behavior (Array a)) (a -> Int) (Component {} (Behavior (Array o)))
 
 merge :: forall a o b p q. Union o p q => Component { | o } a -> Component { | p } b -> Component { | q } { | q }
 merge = runFn2 _merge

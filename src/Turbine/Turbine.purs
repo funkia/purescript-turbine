@@ -10,6 +10,7 @@ module Turbine
   , class MapRecord
   , mapRecordBuilder
   , static
+  , withStatic
   ) where
 
 import Prelude

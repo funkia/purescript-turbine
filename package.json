@@ -28,11 +28,8 @@
     "url": "https://github.com/funkia/purescript-turbine/issues"
   },
   "homepage": "https://github.com/funkia/purescript-turbine#readme",
-  "dependencies": {
-    "turbine": "^0.1.1"
-  },
   "devDependencies": {
-    "@funkia/hareactive": "0.2.0",
+    "@funkia/hareactive": "0.2.1",
     "@funkia/turbine": "file:../turbine"
   }
 }

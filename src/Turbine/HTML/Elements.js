@@ -32,6 +32,14 @@ exports._label = function() {
     return T.elements.label;
 };
 
+exports._header = function() {
+    return T.elements.header;
+};
+
+exports._section = function() {
+    return T.elements.section;
+};
+
 exports._text = T.text;
 
 exports._textB = T.dynamic;

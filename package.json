@@ -30,6 +30,6 @@
   "homepage": "https://github.com/funkia/purescript-turbine#readme",
   "devDependencies": {
     "@funkia/hareactive": "0.2.1",
-    "@funkia/turbine": "file:../turbine"
+    "@funkia/turbine": "^0.1.7"
   }
 }

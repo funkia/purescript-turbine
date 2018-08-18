@@ -8,6 +8,8 @@ module Turbine.HTML.Elements
   , p_
   , text
   , textB
+  , li
+  , li_
   , span
   , span_
   , input
@@ -31,6 +33,7 @@ import Prim.Row (class Union)
 import Turbine (Component)
 import Type.Row (type (+))
 import Web.Event.Event (Event)
+import Web.UIEvent.FocusEvent (FocusEvent)
 import Web.UIEvent.KeyboardEvent (KeyboardEvent)
 
 class Subrow (r :: # Type) (s :: # Type)
@@ -47,6 +50,15 @@ type Attributes' r =
 
 type Attributes = Attributes' ()
 
+type Output' r =
+  ( click :: Stream Unit
+  , dblclick :: Stream Unit
+  , keydown :: Stream KeyboardEvent
+  , keyup :: Stream KeyboardEvent
+  , blur :: Stream FocusEvent
+  | r
+  )
+
 div :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o o
 div = runFn2 _div
 
@@ -54,6 +66,14 @@ div_ :: forall o p. Component o p -> Component o o
 div_ = div {}
 
 foreign import _div :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o o)
+
+li :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o o
+li = runFn2 _li
+
+li_ :: forall o p. Component o p -> Component o o
+li_ = li {}
+
+foreign import _li :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o o)
 
 span :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o o
 span = runFn2 _span

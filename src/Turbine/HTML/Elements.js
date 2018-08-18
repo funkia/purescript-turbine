@@ -4,6 +4,10 @@ exports._h1 = function() {
     return T.elements.h1;
 };
 
+exports._li = function() {
+    return T.elements.li;
+};
+
 exports._span = function() {
     return T.elements.span;
 };

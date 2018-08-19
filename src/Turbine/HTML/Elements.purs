@@ -14,6 +14,8 @@ module Turbine.HTML.Elements
   , span_
   , input
   , input_
+  , checkbox
+  , checkbox_
   , button
   , button_
   , label
@@ -59,6 +61,8 @@ type Output' r =
   | r
   )
 
+type Output = Record (Output' ())
+
 div :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o o
 div = runFn2 _div
 
@@ -99,13 +103,13 @@ h1_ = h1 {}
 
 foreign import _h1 :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o o)
 
-label :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o o
+label :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
 label = runFn2 _label
 
-label_ :: forall o p. Component o p -> Component o o
+label_ :: forall o p. Component o p -> Component o Output
 label_ = label {}
 
-foreign import _label :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o o)
+foreign import _label :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
 section :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o o
 section = runFn2 _section
@@ -145,15 +149,19 @@ type InputAttrs' r =
   ( placeholder :: Behavior String
   , value :: Behavior String
   , autofocus :: Behavior Boolean
-  | Attributes' + r)
+  | Attributes' + r
+  )
 
 type InputAttrs = InputAttrs' ()
 
-type InputOut =
-  { inputValue :: Behavior String
+type InputOut' r =
+  ( inputValue :: Behavior String
   , input :: Stream Event
   , keyup :: Stream KeyboardEvent
-  }
+  | Output' + r
+  )
+
+type InputOut = Record (InputOut' ())
 
 input :: forall a. Subrow a InputAttrs => Record a -> Component {} InputOut
 input = runFn1 _input
@@ -162,6 +170,28 @@ input_ :: Component {} InputOut
 input_ = input {}
 
 foreign import _input :: forall a. Subrow a InputAttrs => Fn1 (Record a) (Component {} InputOut)
+
+type CheckboxAttrs' r =
+  ( checked :: Behavior Boolean
+  | Attributes' + r
+  )
+
+type CheckboxAttrs = CheckboxAttrs' ()
+
+type CheckboxOut' r =
+  ( checked :: Behavior Boolean
+  | Output' + r
+  )
+
+type CheckboxOutput = Record (CheckboxOut' ())
+
+checkbox :: forall a. Subrow a CheckboxAttrs => Record a -> Component {} CheckboxOutput
+checkbox = runFn1 _checkbox
+
+checkbox_ :: Component {} CheckboxOutput
+checkbox_ = checkbox {}
+
+foreign import _checkbox :: forall a. Subrow a CheckboxAttrs => Fn1 (Record a) (Component {} CheckboxOutput)
 
 text :: String -> Component {} Unit
 text = _text

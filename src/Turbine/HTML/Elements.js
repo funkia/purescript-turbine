@@ -20,6 +20,10 @@ exports._input = function() {
   return T.elements.input;
 };
 
+exports._checkbox = function() {
+  return T.elements.checkbox;
+};
+
 exports._a = function() {
     return T.elements.a;
 };

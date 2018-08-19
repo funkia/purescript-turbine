@@ -6,7 +6,6 @@ import Effect (Effect)
 import Hareactive (Behavior, Now, Stream, changes, filter, sample, scan, snapshot, snapshotWith, stepper)
 import Turbine (Component, modelView, output, runComponent, static, withStatic, (</>))
 import Turbine.HTML.Elements as E
-import Web.HTML.HTMLVideoElement (videoWidth)
 import Web.UIEvent.KeyboardEvent as KE
 
 isEnter :: KE.KeyboardEvent -> Boolean
@@ -27,28 +26,34 @@ todoInput = modelView model view
         placeholder: "What needs to be done?"
       }) `output` (\o -> { keyup: o.keyup, value: o.inputValue })
 
+type TodoItemOut =
+  { isComplete :: Behavior Boolean
+  , taskName :: Behavior String
+  }
+
+todoItem :: {} -> Component {} TodoItemOut
 todoItem = modelView model view
   where
-    model input = do
-      pure {}
+    model input _ = do
+      pure { isComplete: pure false, taskName: pure "" }
     view input =
       E.li (static { class: "todo" }) (
-        E.div { class: "view" } (
-          E.checkbox {
-            class: "toggle",
-            output: { toggleTodo: "checkedChange" },
-            props: { checked: isComplete }
-          } </>
-          E.label_ (E.textB taskName) `output` (\o -> { startEditing: o.dblclick }) </>
-          E.button_ { class: "destroy" } `output` (\o -> { deleteClicked: o.click })
-        )
-      ) </>
-      E.input ({ value: taskName } `withStatic` { class: "edit" }) `output` (\o -> {
+        E.div (static { class: "view" }) (
+          E.checkbox ({ checked: input.isComplete } `withStatic` {
+            class: "toggle"
+            -- output: { toggleTodo: "checkedChange" },
+            -- checked: input.isComplete
+          }) </>
+          E.label_ (E.textB input.taskName) `output` (\o -> { startEditing: o.dblclick }) </>
+          E.button { class: pure "destroy" } (E.text "") `output` (\o -> { deleteClicked: o.click })
+        ) </>
+        E.input ({ value: input.taskName } `withStatic` { class: "edit" }) `output` (\o -> {
           newNameInput: o.input,
           nameKeyup: o.keyup,
           nameBlur: o.blur
         })
         -- actions: { focus: focusInput }
+    )
 
 type TodoAppModelOut = {}
 

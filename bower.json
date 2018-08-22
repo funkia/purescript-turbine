@@ -3,7 +3,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/funkia/purescript-hareactive.git"
+    "url": "https://github.com/funkia/purescript-turbine.git"
   },
   "ignore": [
     "**/.*",

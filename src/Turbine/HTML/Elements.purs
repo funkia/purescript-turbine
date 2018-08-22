@@ -8,6 +8,8 @@ module Turbine.HTML.Elements
   , p_
   , text
   , textB
+  , ul
+  , ul_
   , li
   , li_
   , span
@@ -25,14 +27,28 @@ module Turbine.HTML.Elements
   , header
   , header_
   , class Subrow
+  , class RecordOf
+  , class RecordOfGo
+  , toArray
+  , toArrayGo
+  , ClassDescription
+  , ClassElement
+  , staticClass
+  , toggleClass
+  , dynamicClass
   ) where
 
 import Prelude hiding (div)
 
 import Data.Function.Uncurried (Fn2, Fn1, runFn1, runFn2)
+import Data.Symbol (class IsSymbol, SProxy(..))
 import Hareactive (Behavior, Stream)
 import Prim.Row (class Union)
+import Prim.Row as Row
+import Prim.RowList as RL
+import Record as R
 import Turbine (Component)
+import Type.Data.RowList (RLProxy(..))
 import Type.Row (type (+))
 import Web.Event.Event (Event)
 import Web.UIEvent.FocusEvent (FocusEvent)
@@ -42,10 +58,49 @@ class Subrow (r :: # Type) (s :: # Type)
 
 instance subrow :: Union r t s => Subrow r s
 
+class RecordOfGo (xs :: RL.RowList) (row :: # Type) a | xs -> row a where
+  toArrayGo :: RLProxy xs -> Record row -> Array a
+
+instance recordOfConsGo ::
+  ( IsSymbol name -- Name should be a symbol
+  , RL.RowToList row rx
+  , Row.Cons name a trash row
+  , RecordOfGo xs' row a -- Recursive invocation
+  ) => RecordOfGo (RL.Cons name a xs') row a where
+  toArrayGo _ rec = [val] <> (toArrayGo rest rec)
+    where
+      nameP = SProxy :: SProxy name
+      rest = (RLProxy :: RLProxy xs')
+      val = R.get nameP rec
+
+instance recordOfNilGo :: RecordOfGo RL.Nil row a where
+  toArrayGo _ _ = []
+
+class RecordOf a (row :: # Type) | row -> a where
+  toArray :: forall xs. RL.RowToList row xs => RecordOfGo xs row a => { | row } -> Array a
+
+instance recordOf ::
+  ( RL.RowToList row xs
+  , RecordOfGo xs row a
+  ) => RecordOf a row where
+  toArray = toArrayGo (RLProxy :: RLProxy xs)
+
+foreign import data ClassElement :: Type
+
+newtype ClassDescription = ClassDescription (Array ClassElement)
+
+foreign import staticClass :: String -> ClassDescription
+
+foreign import toggleClass :: forall r. RecordOf (Behavior Boolean) r => { | r } -> ClassDescription
+
+foreign import dynamicClass :: forall r. RecordOf (Behavior String) r => { | r } -> ClassDescription
+
+derive newtype instance semigroupClassDescription :: Semigroup ClassDescription
+
 -- Elements
 
 type Attributes' r =
-  ( class :: Behavior String
+  ( class :: ClassDescription
   , id :: Behavior String
   | r
   )
@@ -70,6 +125,14 @@ div_ :: forall o p. Component o p -> Component o o
 div_ = div {}
 
 foreign import _div :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o o)
+
+ul :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o o
+ul = runFn2 _ul
+
+ul_ :: forall o p. Component o p -> Component o o
+ul_ = ul {}
+
+foreign import _ul :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o o)
 
 li :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o o
 li = runFn2 _li
@@ -180,6 +243,7 @@ type CheckboxAttrs = CheckboxAttrs' ()
 
 type CheckboxOut' r =
   ( checked :: Behavior Boolean
+  , checkedChange :: Stream Boolean
   | Output' + r
   )
 

@@ -17,7 +17,7 @@ import Prelude
 
 import Control.Apply (lift2)
 import Data.Function.Uncurried (Fn2, runFn2, mkFn2, Fn3, runFn3)
-import Data.Symbol (class IsSymbol, SProxy(SProxy))
+import Data.Symbol (class IsSymbol, SProxy(..))
 import Effect (Effect)
 import Effect.Uncurried (EffectFn2, runEffectFn2)
 import Hareactive (Behavior, Now)
@@ -27,7 +27,7 @@ import Prim.RowList as RL
 import Record as R
 import Record.Builder (Builder)
 import Record.Builder as Builder
-import Type.Data.RowList (RLProxy(RLProxy))
+import Type.Data.RowList (RLProxy(..))
 
 foreign import data Component :: Type -> Type -> Type
 
@@ -61,8 +61,9 @@ runComponent = runEffectFn2 _runComponent
 
 foreign import _runComponent :: forall o a. EffectFn2 String (Component o a) Unit
 
--- | Turns a behavior of a component into a component of a behavior.
--- | This function is used to create dynamic HTML where the structure of the HTML should change over time.
+-- | Turns a behavior of a component into a component of a behavior. This
+-- | function is used to create dynamic HTML where the structure of the HTML
+-- | should change over time.
 foreign import dynamic :: forall o a. Behavior (Component o a) -> Component {} (Behavior a)
 
 list :: forall a o p.

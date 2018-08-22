@@ -20,8 +20,7 @@ todoInput = modelView model view
       let addItem = filter (_ == "") $ snapshot clearedValue enterPressed
       pure { clearedValue, addItem }
     view input =
-      E.input ({ value: input.clearedValue } `withStatic` {
-        class: "new-todo",
+      E.input ({ value: input.clearedValue, class: E.staticClass "new-todo" } `withStatic` {
         autofocus: true,
         placeholder: "What needs to be done?"
       }) `output` (\o -> { keyup: o.keyup, value: o.inputValue })
@@ -31,23 +30,20 @@ type TodoItemOut =
   , taskName :: Behavior String
   }
 
-todoItem :: {} -> Component {} TodoItemOut
+todoItem :: { id :: Int } -> Component {} TodoItemOut
 todoItem = modelView model view
   where
-    model input _ = do
-      pure { isComplete: pure false, taskName: pure "" }
+    model input { id } = do
+      isComplete <- sample $ stepper false input.toggleTodo
+      pure { isComplete, taskName: pure "Foobar" }
     view input =
-      E.li (static { class: "todo" }) (
-        E.div (static { class: "view" }) (
-          E.checkbox ({ checked: input.isComplete } `withStatic` {
-            class: "toggle"
-            -- output: { toggleTodo: "checkedChange" },
-            -- checked: input.isComplete
-          }) </>
+      E.li ({ class: E.staticClass "todo" <> E.toggleClass { completed: input.isComplete } }) (
+        E.div ({ class: (E.staticClass "view") }) (
+          E.checkbox ({ checked: input.isComplete, class: E.staticClass "toggle" }) `output` (\o -> { toggleTodo: o.checkedChange }) </>
           E.label_ (E.textB input.taskName) `output` (\o -> { startEditing: o.dblclick }) </>
-          E.button { class: pure "destroy" } (E.text "") `output` (\o -> { deleteClicked: o.click })
+          E.button { class: E.staticClass "destroy" } (E.text "") `output` (\o -> { deleteClicked: o.click })
         ) </>
-        E.input ({ value: input.taskName } `withStatic` { class: "edit" }) `output` (\o -> {
+        E.input ({ value: input.taskName, class: E.staticClass "edit" }) `output` (\o -> {
           newNameInput: o.input,
           nameKeyup: o.keyup,
           nameBlur: o.blur
@@ -67,10 +63,13 @@ todoAppModel input _ = do
 
 todoAppView :: TodoAppModelOut -> Component TodoAppViewOut TodoAppViewOut
 todoAppView {} =
-  E.section { class: pure "todoapp" } (
-    E.header { class: pure "header" } (
+  E.section { class: E.staticClass "todoapp" } (
+    E.header { class: E.staticClass "header" } (
       E.h1_ (E.text "todo") </>
-      todoInput {} `output` (\o -> { addItem: o.addItem })
+      todoInput {} `output` (\o -> { addItem: o.addItem }) </>
+      E.ul { class: E.staticClass "todo-list" } (
+        todoItem { id: 2 }
+      )
     )
   )
 app :: Component {} {}

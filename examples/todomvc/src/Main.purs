@@ -2,9 +2,10 @@ module Main where
 
 import Prelude
 
+import Data.Array (snoc)
 import Effect (Effect)
 import Hareactive as H
-import Turbine (Component, modelView, output, runComponent, withStatic, (</>))
+import Turbine (Component, modelView, output, runComponent, withStatic, (</>), list)
 import Turbine.HTML.Elements as E
 import Web.UIEvent.KeyboardEvent as KE
 
@@ -12,13 +13,18 @@ import Web.UIEvent.KeyboardEvent as KE
 isKey :: String -> KE.KeyboardEvent -> Boolean
 isKey key event = (KE.key event) == key
 
+type NewTodo =
+  { id :: Int
+  , name :: String
+  }
+
 todoInput :: {} -> Component {} { clearedValue :: H.Behavior String, addItem :: H.Stream String }
 todoInput = modelView model view
   where
     model { keyup, value } {} = do
       let enterPressed = H.filter (isKey "Enter") keyup
       clearedValue <- H.sample $ H.stepper "" ((enterPressed $> "") <> H.changes value)
-      let addItem = H.filter (_ == "") $ H.snapshot clearedValue enterPressed
+      let addItem = H.filter (_ /= "") $ H.snapshot clearedValue enterPressed
       pure { clearedValue, addItem }
     view input =
       E.input ({ value: input.clearedValue, class: E.staticClass "new-todo" } `withStatic` {
@@ -32,7 +38,7 @@ type TodoItemOut =
   , isEditing :: H.Behavior Boolean
   }
 
-todoItem :: { id :: Int, name :: String } -> Component {} TodoItemOut
+todoItem :: NewTodo -> Component {} TodoItemOut
 todoItem = modelView model view
   where
     model input options = do
@@ -66,28 +72,29 @@ todoItem = modelView model view
         })
     )
 
-type TodoAppModelOut = {}
+type TodoAppModelOut = { todos :: H.Behavior (Array NewTodo) }
 
 type TodoAppViewOut = { addItem :: H.Stream String }
 
 todoAppModel :: TodoAppViewOut -> Unit -> H.Now TodoAppModelOut
 todoAppModel input _ = do
   nextId <- H.sample $ H.scan (+) 0 (input.addItem $> 1)
-  let newTodoS = H.snapshotWith (\name id -> { name, id }) nextId input.addItem
-  pure {}
+  let newTodo = H.snapshotWith (\name id -> { name, id }) nextId input.addItem
+  todos <- H.sample $ H.scan (flip snoc) [] newTodo
+  pure { todos }
 
 todoAppView :: TodoAppModelOut -> Component TodoAppViewOut TodoAppViewOut
-todoAppView {} =
+todoAppView input =
   E.section { class: E.staticClass "todoapp" } (
     E.header { class: E.staticClass "header" } (
       E.h1_ (E.text "todo") </>
       todoInput {} `output` (\o -> { addItem: o.addItem }) </>
       E.ul { class: E.staticClass "todo-list" } (
-        todoItem { id: 2, name: "Test" }
+        list todoItem input.todos (_.id)
       )
     )
   )
-app :: Component {} {}
+app :: Component {} TodoAppModelOut
 app = modelView todoAppModel todoAppView unit
 
 main :: Effect Unit

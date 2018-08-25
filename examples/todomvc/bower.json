@@ -13,7 +13,8 @@
     "purescript-record": "^1.0.0",
     "purescript-strings": "^4.0.0",
     "purescript-hareactive": "^0.0.4",
-    "purescript-turbine": "../../"
+    "purescript-turbine": "../../",
+    "purescript-arrays": "^5.0.0"
   },
   "devDependencies": {
     "purescript-psci-support": "^4.0.0"

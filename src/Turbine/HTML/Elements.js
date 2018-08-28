@@ -62,6 +62,10 @@ exports._header = function() {
     return T.elements.header;
 };
 
+exports._footer = function() {
+  return T.elements.footer;
+};
+
 exports._section = function() {
     return T.elements.section;
 };

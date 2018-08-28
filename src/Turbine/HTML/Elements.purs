@@ -26,6 +26,8 @@ module Turbine.HTML.Elements
   , section_
   , header
   , header_
+  , footer
+  , footer_
   , class Subrow
   , class RecordOf
   , class RecordOfGo
@@ -53,6 +55,7 @@ import Type.Row (type (+))
 import Web.Event.Event (Event)
 import Web.UIEvent.FocusEvent (FocusEvent)
 import Web.UIEvent.KeyboardEvent (KeyboardEvent)
+import Web.UIEvent.InputEvent (InputEvent)
 
 class Subrow (r :: # Type) (s :: # Type)
 
@@ -190,6 +193,14 @@ header_ = header {}
 
 foreign import _header :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o o)
 
+footer :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o o
+footer = runFn2 _footer
+
+footer_ :: forall o p. Component o p -> Component o o
+footer_ = footer {}
+
+foreign import _footer :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o o)
+
 type ButtonOut = { click :: Stream Unit }
 
 button :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o ButtonOut
@@ -219,7 +230,7 @@ type InputAttrs = InputAttrs' ()
 
 type InputOut' r =
   ( inputValue :: Behavior String
-  , input :: Stream Event
+  , input :: Stream InputEvent
   , keyup :: Stream KeyboardEvent
   | Output' + r
   )

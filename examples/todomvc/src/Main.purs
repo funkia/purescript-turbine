@@ -2,7 +2,8 @@ module Main where
 
 import Prelude
 
-import Data.Array (snoc)
+import Data.Array (filter, null, snoc)
+import Data.Traversable (fold)
 import Effect (Effect)
 import Hareactive as H
 import Turbine (Component, modelView, output, runComponent, withStatic, (</>), list)
@@ -36,6 +37,7 @@ type TodoItemOut =
   { isComplete :: H.Behavior Boolean
   , name :: H.Behavior String
   , isEditing :: H.Behavior Boolean
+  , delete :: H.Stream Int
   }
 
 todoItem :: NewTodo -> Component {} TodoItemOut
@@ -54,7 +56,9 @@ todoItem = modelView model view
       let cancelName = H.snapshot initialName cancelEditing
       isEditing <- H.sample $ H.toggle false (input.startEditing) stopEditing
       name <- H.sample $ H.stepper options.name (H.changes input.name <> cancelName)
-      pure { isComplete, name, isEditing }
+      -- If the delete button is clicked we should signal to parent
+      let delete = input.deleteClicked $> options.id
+      pure { isComplete, name, isEditing, delete }
     view input =
       E.li ({ class: E.staticClass "todo" <> E.toggleClass { completed: input.isComplete, editing: input.isEditing } }) (
         E.div ({ class: (E.staticClass "view") }) (
@@ -72,15 +76,42 @@ todoItem = modelView model view
         })
     )
 
+-- Footer
+
+formatRemainder :: Int -> String
+formatRemainder n = " item" (if n == 1 then "" else "s") <> " left"
+
+todoFooter = modelView model view
+  where
+    model input options = do
+      pure { todos: options.todos }
+    view input =
+      let
+        hidden = map null input.todos
+      in
+        E.footer { class: E.staticClass "footer" <> E.toggleClass { hidden } } (
+          E.span { class: E.staticClass "footer" } (
+            E.text "0"
+          ) </>
+          E.ul { class: E.staticClass "filters" } (
+            E.text "filters"
+          ) </>
+          E.button {} (E.text "Clear completed")
+        )
+
 type TodoAppModelOut = { todos :: H.Behavior (Array NewTodo) }
 
-type TodoAppViewOut = { addItem :: H.Stream String }
+type TodoAppViewOut = { addItem :: H.Stream String, items :: H.Behavior (Array TodoItemOut)  }
 
 todoAppModel :: TodoAppViewOut -> Unit -> H.Now TodoAppModelOut
 todoAppModel input _ = do
   nextId <- H.sample $ H.scan (+) 0 (input.addItem $> 1)
+  let itemToDelete = H.switchStream $ map (fold <<< map _.delete) input.items
   let newTodo = H.snapshotWith (\name id -> { name, id }) nextId input.addItem
-  todos <- H.sample $ H.scan (flip snoc) [] newTodo
+  todos <- H.sample $ H.scan ($) [] (
+    (flip snoc <$> newTodo) <>
+    ((\id -> filter ((_ /= id) <<< (_.id))) <$> itemToDelete)
+  )
   pure { todos }
 
 todoAppView :: TodoAppModelOut -> Component TodoAppViewOut TodoAppViewOut
@@ -90,8 +121,9 @@ todoAppView input =
       E.h1_ (E.text "todo") </>
       todoInput {} `output` (\o -> { addItem: o.addItem }) </>
       E.ul { class: E.staticClass "todo-list" } (
-        list todoItem input.todos (_.id)
-      )
+        list (\i -> todoItem i `output` identity) input.todos (_.id) `output` (\o -> { items: o })
+      ) </>
+      todoFooter { todos: input.todos }
     )
   )
 app :: Component {} TodoAppModelOut

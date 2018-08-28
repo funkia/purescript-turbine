@@ -14,7 +14,8 @@
     "purescript-strings": "^4.0.0",
     "purescript-hareactive": "^0.0.4",
     "purescript-turbine": "../../",
-    "purescript-arrays": "^5.0.0"
+    "purescript-arrays": "^5.0.0",
+    "purescript-foldable-traversable": "^4.0.0"
   },
   "devDependencies": {
     "purescript-psci-support": "^4.0.0"

@@ -26,7 +26,9 @@ exports._output = function() {
   };
 };
 
-exports._list = T.list;
+exports._list = function() {
+  return T.list;
+}
 
 exports._modelView = T.modelView;
 

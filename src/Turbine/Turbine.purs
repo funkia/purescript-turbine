@@ -6,6 +6,8 @@ module Turbine
   , (</>)
   , dynamic
   , output
+  , class Key
+  , keyNoop
   , list
   , class MapRecord
   , mapRecordBuilder
@@ -66,12 +68,26 @@ foreign import _runComponent :: forall o a. EffectFn2 String (Component o a) Uni
 -- | should change over time.
 foreign import dynamic :: forall o a. Behavior (Component o a) -> Component {} (Behavior a)
 
-list :: forall a o p.
-  (a -> Component o p) -> Behavior (Array a) -> (a -> Int) -> Component {} (Behavior (Array o))
+-- | Type class implemented by `Int`, `Number`, and `String`. Used to represent
+-- | overloads.
+class Key a where
+  keyNoop :: a -> a
+
+instance keyInt :: Key Int where
+  keyNoop = identity
+
+instance keyNumber :: Key Number where
+  keyNoop = identity
+
+instance keyString :: Key String where
+  keyNoop = identity
+
+list :: forall a o p k. Key k =>
+  (a -> Component o p) -> Behavior (Array a) -> (a -> k) -> Component {} (Behavior (Array o))
 list = runFn3 _list
 
-foreign import _list :: forall a o p.
-  Fn3 (a -> Component o p) (Behavior (Array a)) (a -> Int) (Component {} (Behavior (Array o)))
+foreign import _list :: forall a o p k. Key k =>
+  Fn3 (a -> Component o p) (Behavior (Array a)) (a -> k) (Component {} (Behavior (Array o)))
 
 -- | Combines two components and merges their explicit output.
 merge :: forall a o b p q. Union o p q => Component { | o } a -> Component { | p } b -> Component { | q } { | q }

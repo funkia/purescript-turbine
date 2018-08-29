@@ -22,7 +22,7 @@ counterModel { increment, decrement } id = do
   pure { count }
 
 counterView :: CounterOut -> Component _ CounterViewOut
-counterView {count} =
+counterView {count} _ =
   E.div_ (
     E.text "Counter " </>
     E.span_ (E.textB $ map show count) </>

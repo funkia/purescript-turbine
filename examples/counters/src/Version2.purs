@@ -28,7 +28,7 @@ counterModel { increment, decrement, delete } id = do
   pure { count, delete: delete $> id }
 
 counterView :: CounterOut -> Component CounterViewOut CounterViewOut
-counterView {count} =
+counterView { count } _ =
   E.div (static { class: "foo bar" }) (
     E.text "Counter " </>
     E.span_ (E.textB $ map show count) </>
@@ -63,7 +63,7 @@ counterListModel { addCounter, listOut } init = do
   pure { sum, counterIds }
 
 counterListView :: ListOut -> Component _ ListViewOut
-counterListView {sum, counterIds} =
+counterListView { sum, counterIds } _ =
   E.div_ (
     E.h1_ (E.text "Counters") </>
     E.span_ (E.textB (map (\n -> "Sum " <> show n) sum)) </>

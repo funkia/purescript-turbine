@@ -25,10 +25,10 @@ type AppModelOut = { isValid :: Behavior Boolean }
 type AppViewOut = { email :: Behavior String }
 
 appModel :: AppViewOut -> Unit -> Now AppModelOut
-appModel {email} _ = pure { isValid: isValidEmail <$> email }
+appModel { email } _ = pure { isValid: isValidEmail <$> email }
 
 appView :: AppModelOut -> Component AppViewOut AppViewOut
-appView {isValid} =
+appView { isValid } _ =
   E.h1_ (E.text "Email validator") </>
   E.input_ `output` (\o -> { email: o.inputValue }) </>
   E.p_ (

@@ -22,7 +22,7 @@ type AppModelOut =
 type AppViewOut = {snapClick :: Stream Unit}
 
 appModel :: AppViewOut -> Unit -> Now AppModelOut
-appModel {snapClick} _ = do
+appModel { snapClick } _ = do
   let msgFromClick =
         map (\t -> "You last pressed the button at " <> formatTime t)
             (snapshot time snapClick)
@@ -30,7 +30,7 @@ appModel {snapClick} _ = do
   pure {time, message}
 
 appView :: AppModelOut -> Component _ AppViewOut
-appView {message, time} =
+appView { message, time } _ =
   E.h1_ (E.text "Continuous") </>
   E.p_ (E.textB $ formatTime <$> time) </>
   E.button_ (E.text "Click to snap time") `output` (\o -> {snapClick: o.click}) </>

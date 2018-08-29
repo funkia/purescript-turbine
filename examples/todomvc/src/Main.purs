@@ -27,7 +27,7 @@ todoInput = modelView model view
       clearedValue <- H.sample $ H.stepper "" ((enterPressed $> "") <> H.changes value)
       let addItem = H.filter (_ /= "") $ H.snapshot clearedValue enterPressed
       pure { clearedValue, addItem }
-    view input =
+    view input _ =
       E.input ({ value: input.clearedValue, class: E.staticClass "new-todo" } `withStatic` {
         autofocus: true,
         placeholder: "What needs to be done?"
@@ -59,7 +59,7 @@ todoItem = modelView model view
       -- If the delete button is clicked we should signal to parent
       let delete = input.deleteClicked $> options.id
       pure { isComplete, name, isEditing, delete }
-    view input =
+    view input _ =
       E.li ({ class: E.staticClass "todo" <> E.toggleClass { completed: input.isComplete, editing: input.isEditing } }) (
         E.div ({ class: (E.staticClass "view") }) (
           E.checkbox
@@ -85,7 +85,7 @@ todoFooter = modelView model view
   where
     model input options = do
       pure { todos: options.todos }
-    view input =
+    view input _ =
       let
         hidden = map null input.todos
       in
@@ -115,7 +115,7 @@ todoAppModel input _ = do
   pure { todos }
 
 todoAppView :: TodoAppModelOut -> Component TodoAppViewOut TodoAppViewOut
-todoAppView input =
+todoAppView input _ =
   E.section { class: E.staticClass "todoapp" } (
     E.header { class: E.staticClass "header" } (
       E.h1_ (E.text "todo") </>

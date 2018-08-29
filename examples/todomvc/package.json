@@ -4,8 +4,8 @@
   "description": "",
   "main": "bundle.js",
   "dependencies": {
-    "@funkia/hareactive": "^0.2.1",
-    "@funkia/turbine": "^0.1.7",
+    "@funkia/hareactive": "file:../../../hareactive",
+    "@funkia/turbine": "file:../../../turbine",
     "todomvc-app-css": "^2.1.2"
   },
   "devDependencies": {},

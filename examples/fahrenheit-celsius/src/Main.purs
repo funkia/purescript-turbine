@@ -34,7 +34,7 @@ appModel { fahrenChange, celsiusChange } _ =
     pure { fahren, celsius }
 
 appView :: AppModelOut -> Component _ _
-appView { celsius, fahren } =
+appView { celsius, fahren } _ =
   E.div_ (
     E.div_ (
       E.label_ (E.text "Fahrenheit") </>

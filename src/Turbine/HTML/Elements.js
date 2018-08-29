@@ -38,6 +38,10 @@ exports._input = function() {
   return T.elements.input;
 };
 
+exports._textarea = function() {
+    return T.elements.textarea;
+};
+
 exports._checkbox = function() {
   return T.elements.checkbox;
 };

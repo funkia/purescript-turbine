@@ -16,6 +16,8 @@ module Turbine.HTML.Elements
   , span_
   , input
   , input_
+  , textarea
+  , textarea_
   , checkbox
   , checkbox_
   , button
@@ -244,6 +246,22 @@ input_ :: Component {} InputOut
 input_ = input {}
 
 foreign import _input :: forall a. Subrow a InputAttrs => Fn1 (Record a) (Component {} InputOut)
+
+type TextareaAttrs' r =
+  ( rows :: Behavior Int
+  , cols :: Behavior Int
+  | InputAttrs' + r
+  )
+
+type TextareaAttrs = TextareaAttrs' ()
+
+textarea :: forall a. Subrow a TextareaAttrs => Record a -> Component {} InputOut
+textarea = runFn1 _textarea
+
+textarea_ :: Component {} InputOut
+textarea_ = textarea {}
+
+foreign import _textarea :: forall a. Subrow a TextareaAttrs => Fn1 (Record a) (Component {} InputOut)
 
 type CheckboxAttrs' r =
   ( checked :: Behavior Boolean

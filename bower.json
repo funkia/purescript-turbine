@@ -18,7 +18,7 @@
     "purescript-record": "^1.0.0",
     "purescript-effect": "^2.0.0",
     "purescript-arrays": "^5.0.0",
-    "purescript-hareactive": "^0.0.4",
+    "purescript-hareactive": "0.0.5",
     "purescript-web-html": "^1.0.0",
     "purescript-web-events": "^1.0.0",
     "purescript-web-uievents": "^1.0.0"

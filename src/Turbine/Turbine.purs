@@ -22,7 +22,7 @@ import Data.Function.Uncurried (Fn2, runFn2, mkFn2, Fn3, runFn3)
 import Data.Symbol (class IsSymbol, SProxy(..))
 import Effect (Effect)
 import Effect.Uncurried (EffectFn2, runEffectFn2)
-import Hareactive (Behavior, Now)
+import Hareactive.Types (Behavior, Now)
 import Prim.Row (class Union)
 import Prim.Row as Row
 import Prim.RowList as RL

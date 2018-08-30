@@ -7,7 +7,7 @@ module Turbine.HTML.Properties
   , toValue
   ) where
 
-import Hareactive (Behavior)
+import Hareactive.Types (Behavior)
 import Prelude (identity, map, pure, show, (<<<))
 
 {-- import Data.Array (Array) --}

@@ -2,10 +2,11 @@ module Main where
 
 import Prelude
 
-import Data.Array (filter, null, snoc)
+import Data.Array (filter, null, snoc, length)
 import Data.Traversable (fold)
 import Effect (Effect)
-import Hareactive as H
+import Hareactive.Types (Behavior, Stream, Now)
+import Hareactive.Combinators as H
 import Turbine (Component, modelView, output, runComponent, withStatic, (</>), list)
 import Turbine.HTML.Elements as E
 import Web.UIEvent.KeyboardEvent as KE
@@ -19,7 +20,7 @@ type NewTodo =
   , name :: String
   }
 
-todoInput :: {} -> Component {} { clearedValue :: H.Behavior String, addItem :: H.Stream String }
+todoInput :: {} -> Component {} { clearedValue :: Behavior String, addItem :: Stream String }
 todoInput = modelView model view
   where
     model { keyup, value } {} = do
@@ -34,10 +35,10 @@ todoInput = modelView model view
       }) `output` (\o -> { keyup: o.keyup, value: o.inputValue })
 
 type TodoItemOut =
-  { isComplete :: H.Behavior Boolean
-  , name :: H.Behavior String
-  , isEditing :: H.Behavior Boolean
-  , delete :: H.Stream Int
+  { isComplete :: Behavior Boolean
+  , name :: Behavior String
+  , isEditing :: Behavior Boolean
+  , delete :: Stream Int
   }
 
 todoItem :: NewTodo -> Component {} TodoItemOut
@@ -79,19 +80,20 @@ todoItem = modelView model view
 -- Footer
 
 formatRemainder :: Int -> String
-formatRemainder n = " item" (if n == 1 then "" else "s") <> " left"
+formatRemainder n = (show n) <> " item" <> (if n == 1 then "" else "s") <> " left"
 
 todoFooter = modelView model view
   where
     model input options = do
-      pure { todos: options.todos }
+      let itemsLeft = H.moment (\at -> length $ filter (not <<< at <<< (_.isComplete)) (at options.todos))
+      pure { todos: options.todos, itemsLeft }
     view input _ =
       let
         hidden = map null input.todos
       in
         E.footer { class: E.staticClass "footer" <> E.toggleClass { hidden } } (
           E.span { class: E.staticClass "footer" } (
-            E.text "0"
+            E.textB (formatRemainder <$> input.itemsLeft)
           ) </>
           E.ul { class: E.staticClass "filters" } (
             E.text "filters"
@@ -99,11 +101,11 @@ todoFooter = modelView model view
           E.button {} (E.text "Clear completed")
         )
 
-type TodoAppModelOut = { todos :: H.Behavior (Array NewTodo) }
+type TodoAppModelOut = { todos :: Behavior (Array NewTodo), items :: Behavior (Array TodoItemOut) }
 
-type TodoAppViewOut = { addItem :: H.Stream String, items :: H.Behavior (Array TodoItemOut)  }
+type TodoAppViewOut = { addItem :: Stream String, items :: Behavior (Array TodoItemOut) }
 
-todoAppModel :: TodoAppViewOut -> Unit -> H.Now TodoAppModelOut
+todoAppModel :: TodoAppViewOut -> Unit -> Now TodoAppModelOut
 todoAppModel input _ = do
   nextId <- H.sample $ H.scan (+) 0 (input.addItem $> 1)
   let itemToDelete = H.switchStream $ map (fold <<< map _.delete) input.items
@@ -112,9 +114,9 @@ todoAppModel input _ = do
     (flip snoc <$> newTodo) <>
     ((\id -> filter ((_ /= id) <<< (_.id))) <$> itemToDelete)
   )
-  pure { todos }
+  pure { todos, items: input.items }
 
-todoAppView :: TodoAppModelOut -> Component TodoAppViewOut TodoAppViewOut
+todoAppView :: TodoAppModelOut -> Unit -> Component TodoAppViewOut TodoAppViewOut
 todoAppView input _ =
   E.section { class: E.staticClass "todoapp" } (
     E.header { class: E.staticClass "header" } (
@@ -123,7 +125,7 @@ todoAppView input _ =
       E.ul { class: E.staticClass "todo-list" } (
         list (\i -> todoItem i `output` identity) input.todos (_.id) `output` (\o -> { items: o })
       ) </>
-      todoFooter { todos: input.todos }
+      todoFooter { todos: input.items }
     )
   )
 app :: Component {} TodoAppModelOut

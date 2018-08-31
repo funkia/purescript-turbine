@@ -123,21 +123,21 @@ type Output' r =
 
 type Output = Record (Output' ())
 
-div :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o o
+div :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
 div = runFn2 _div
 
-div_ :: forall o p. Component o p -> Component o o
+div_ :: forall o p. Component o p -> Component o Output
 div_ = div {}
 
-foreign import _div :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o o)
+foreign import _div :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
-ul :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o o
+ul :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
 ul = runFn2 _ul
 
-ul_ :: forall o p. Component o p -> Component o o
+ul_ :: forall o p. Component o p -> Component o Output
 ul_ = ul {}
 
-foreign import _ul :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o o)
+foreign import _ul :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
 li :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o o
 li = runFn2 _li
@@ -145,31 +145,31 @@ li = runFn2 _li
 li_ :: forall o p. Component o p -> Component o o
 li_ = li {}
 
-foreign import _li :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o o)
+foreign import _li :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
-span :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o o
+span :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
 span = runFn2 _span
 
-span_ :: forall o p. Component o p -> Component o o
+span_ :: forall o p. Component o p -> Component o Output
 span_ = span {}
 
-foreign import _span :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o o)
+foreign import _span :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
-p :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o o
+p :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
 p = runFn2 _p
 
-p_ :: forall o p. Component o p -> Component o o
+p_ :: forall o p. Component o p -> Component o Output
 p_ = p {}
 
-foreign import _p :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o o)
+foreign import _p :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
-h1 :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o o
+h1 :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
 h1 = runFn2 _h1
 
-h1_ :: forall o p. Component o p -> Component o o
+h1_ :: forall o p. Component o p -> Component o Output
 h1_ = h1 {}
 
-foreign import _h1 :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o o)
+foreign import _h1 :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
 label :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
 label = runFn2 _label
@@ -179,29 +179,29 @@ label_ = label {}
 
 foreign import _label :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
-section :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o o
+section :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
 section = runFn2 _section
 
-section_ :: forall o p. Component o p -> Component o o
+section_ :: forall o p. Component o p -> Component o Output
 section_ = section {}
 
-foreign import _section :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o o)
+foreign import _section :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
-header :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o o
+header :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
 header = runFn2 _header
 
-header_ :: forall o p. Component o p -> Component o o
+header_ :: forall o p. Component o p -> Component o Output
 header_ = header {}
 
-foreign import _header :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o o)
+foreign import _header :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
-footer :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o o
+footer :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
 footer = runFn2 _footer
 
-footer_ :: forall o p. Component o p -> Component o o
+footer_ :: forall o p. Component o p -> Component o Output
 footer_ = footer {}
 
-foreign import _footer :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o o)
+foreign import _footer :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
 type ButtonOut = { click :: Stream Unit }
 
@@ -213,13 +213,13 @@ button_ = button {}
 
 foreign import _button :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o ButtonOut)
 
-a :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o o
+a :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
 a = runFn2 _a
 
-a_ :: forall o p. Component o p -> Component o o
+a_ :: forall o p. Component o p -> Component o Output
 a_ = a {}
 
-foreign import _a :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o o)
+foreign import _a :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
 type InputAttrs' r =
   ( placeholder :: Behavior String

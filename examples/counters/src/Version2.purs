@@ -28,7 +28,7 @@ counterModel { increment, decrement, delete } id = do
   count <- sample $ scan (+) 0 changes
   pure { count, delete: delete $> id }
 
---counterView :: CounterOut -> Unit -> Component CounterViewOut CounterViewOut
+counterView :: CounterOut -> Int -> Component CounterViewOut CounterViewOut
 counterView { count } _ =
   E.div { class: E.staticClass "foo bar" } (
     E.text "Counter " </>
@@ -63,7 +63,7 @@ counterListModel { addCounter, listOut } init = do
   counterIds <- sample $ scan ($) init (appendCounter <> removeCounter)
   pure { sum, counterIds }
 
---counterListView :: ListOut -> Array Int -> Component _ ListViewOut
+counterListView :: ListOut -> Array Int -> Component _ ListViewOut
 counterListView { sum, counterIds } _ =
   E.div_ (
     E.h1_ (E.text "Counters") </>

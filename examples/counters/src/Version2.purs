@@ -7,7 +7,8 @@ import Prelude
 import Control.Apply (lift2)
 import Data.Array (cons, filter)
 import Data.Foldable (fold, foldr)
-import Hareactive (Behavior, Stream, Now, sample, scan, scanS, switchStream)
+import Hareactive.Types (Behavior, Stream, Now)
+import Hareactive.Combinators (sample, scan, scanS, switchStream)
 import Turbine (Component, list, modelView, output, static, (</>))
 import Turbine.HTML.Elements as E
 
@@ -27,9 +28,9 @@ counterModel { increment, decrement, delete } id = do
   count <- sample $ scan (+) 0 changes
   pure { count, delete: delete $> id }
 
-counterView :: CounterOut -> Component CounterViewOut CounterViewOut
+--counterView :: CounterOut -> Unit -> Component CounterViewOut CounterViewOut
 counterView { count } _ =
-  E.div (static { class: "foo bar" }) (
+  E.div { class: E.staticClass "foo bar" } (
     E.text "Counter " </>
     E.span_ (E.textB $ map show count) </>
     E.button_ (E.text "+") `output` (\o -> { increment: o.click }) </>
@@ -62,7 +63,7 @@ counterListModel { addCounter, listOut } init = do
   counterIds <- sample $ scan ($) init (appendCounter <> removeCounter)
   pure { sum, counterIds }
 
-counterListView :: ListOut -> Component _ ListViewOut
+--counterListView :: ListOut -> Array Int -> Component _ ListViewOut
 counterListView { sum, counterIds } _ =
   E.div_ (
     E.h1_ (E.text "Counters") </>

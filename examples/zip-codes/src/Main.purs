@@ -13,7 +13,8 @@ import Effect.Class (liftEffect)
 import Effect.Console (log)
 import Partial.Unsafe (unsafePartial)
 import Data.Tuple (Tuple(..))
-import Hareactive (Behavior, Stream, Now, changes, split, filterJust, sample, stepper, filter, runStreamAff)
+import Hareactive.Types (Behavior, Stream, Now)
+import Hareactive.Combinators (changes, split, filterJust, sample, stepper, filter, runStreamAff)
 import Network.HTTP.Affjax as AX
 import Network.HTTP.Affjax.Response as AXRes
 import Network.HTTP.StatusCode (StatusCode(..))
@@ -60,7 +61,7 @@ zipModel { zipCode } _ = do
   status <- sample $ stepper "" statusChange
   pure { status }
 
-zipView { status } =
+zipView { status } _ =
   E.div_ (
     E.span_ (E.text "Please type a valid US zip code: ") </>
     E.input (static { placeholder: "Zip code" }) `output` (\o -> { zipCode: o.inputValue }) </>

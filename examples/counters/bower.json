@@ -10,7 +10,7 @@
     "purescript-prelude": "^4.1.0",
     "purescript-functions": "^4.0.0",
     "purescript-record": "^1.0.0",
-    "purescript-hareactive": "^0.0.4",
+    "purescript-hareactive": "^0.0.5",
     "purescript-turbine": "../../"
   },
   "devDependencies": {

@@ -139,10 +139,10 @@ ul_ = ul {}
 
 foreign import _ul :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
-li :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o o
+li :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
 li = runFn2 _li
 
-li_ :: forall o p. Component o p -> Component o o
+li_ :: forall o p. Component o p -> Component o Output
 li_ = li {}
 
 foreign import _li :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)

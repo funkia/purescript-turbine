@@ -7,7 +7,8 @@ import Prelude
 import Control.Apply (lift2)
 import Data.Array (cons, filter)
 import Data.Foldable (fold, foldr)
-import Hareactive (Behavior, Stream, Now, sample, scan, scanS, switchStream)
+import Hareactive.Types (Behavior, Stream, Now)
+import Hareactive.Combinators (sample, scan, scanS, switchStream)
 import Data.Monoid ((<>))
 import Turbine (Component, runComponent, output, modelView, (</>), list)
 import Turbine.HTML.Elements as E
@@ -21,7 +22,7 @@ counterModel { increment, decrement } id = do
   count <- sample $ scan (+) 0 changes
   pure { count }
 
-counterView :: CounterOut -> Component _ CounterViewOut
+counterView :: CounterOut -> Int -> Component _ CounterViewOut
 counterView {count} _ =
   E.div_ (
     E.text "Counter " </>

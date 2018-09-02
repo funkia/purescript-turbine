@@ -2,8 +2,8 @@ module Main where
 
 import Prelude
 
-import Control.Monad.Eff (Eff)
-import Hareactive (Behavior, Stream, Now, time, sample, stepper, snapshot)
+import Hareactive.Types (Behavior, Stream, Now)
+import Hareactive.Combinators (time, sample, stepper, snapshot)
 import Data.Array (head)
 import Data.Maybe (fromMaybe)
 import Data.String (split, Pattern(..))
@@ -29,7 +29,7 @@ appModel { snapClick } _ = do
   message <- sample $ stepper "You've not clicked the button yet" msgFromClick
   pure {time, message}
 
-appView :: AppModelOut -> Component _ AppViewOut
+appView :: AppModelOut -> Unit -> Component _ AppViewOut
 appView { message, time } _ =
   E.h1_ (E.text "Continuous") </>
   E.p_ (E.textB $ formatTime <$> time) </>
@@ -38,5 +38,4 @@ appView { message, time } _ =
 
 app = modelView appModel appView unit
 
-main :: Eff _ Unit
 main = runComponent "#mount" app

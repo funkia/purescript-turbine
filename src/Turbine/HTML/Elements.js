@@ -74,6 +74,23 @@ exports._section = function() {
     return T.elements.section;
 };
 
+exports._table = function() {
+    return T.elements.table;
+};
+
+exports._th = function() {
+    return T.elements.th;
+};
+
+exports._tr = function() {
+    return T.elements.tr;
+};
+
+exports._td = function() {
+    return T.elements.td;
+};
+
+
 exports._text = T.text;
 
 exports._textB = T.dynamic;

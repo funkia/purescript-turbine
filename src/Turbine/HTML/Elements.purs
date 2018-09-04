@@ -30,6 +30,14 @@ module Turbine.HTML.Elements
   , header_
   , footer
   , footer_
+  , table
+  , table_
+  , th
+  , th_
+  , tr
+  , tr_
+  , td
+  , td_
   , class Subrow
   , class RecordOf
   , class RecordOfGo
@@ -295,6 +303,38 @@ textB :: Behavior String -> Component {} Unit
 textB = _textB
 
 foreign import _textB :: Behavior String -> Component {} Unit
+
+table :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
+table = runFn2 _table
+
+table_ :: forall o p. Component o p -> Component o Output
+table_ = table {}
+
+foreign import _table :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
+
+th :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
+th = runFn2 _th
+
+th_ :: forall o p. Component o p -> Component o Output
+th_ = th {}
+
+foreign import _th :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
+
+tr :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
+tr = runFn2 _tr
+
+tr_ :: forall o p. Component o p -> Component o Output
+tr_ = tr {}
+
+foreign import _tr :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
+
+td :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
+td = runFn2 _td
+
+td_ :: forall o p. Component o p -> Component o Output
+td_ = td {}
+
+foreign import _td :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
 foreign import br :: Component {} Unit
 

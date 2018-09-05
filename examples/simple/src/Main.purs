@@ -4,7 +4,7 @@ import Prelude
 
 import Effect (Effect)
 import Data.Either (fromRight)
-import Hareactive (Behavior, Now)
+import Hareactive.Types (Behavior, Now)
 import Data.String.Regex (Regex, regex, test)
 import Data.String.Regex.Flags (ignoreCase)
 import Partial.Unsafe (unsafePartial)
@@ -27,7 +27,7 @@ type AppViewOut = { email :: Behavior String }
 appModel :: AppViewOut -> Unit -> Now AppModelOut
 appModel { email } _ = pure { isValid: isValidEmail <$> email }
 
-appView :: AppModelOut -> Component AppViewOut AppViewOut
+appView :: AppModelOut -> Unit -> Component AppViewOut AppViewOut
 appView { isValid } _ =
   E.h1_ (E.text "Email validator") </>
   E.input_ `output` (\o -> { email: o.inputValue }) </>

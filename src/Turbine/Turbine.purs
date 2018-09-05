@@ -48,10 +48,20 @@ instance applyComponent :: Apply (Component o) where
 
 foreign import _apply :: forall o a b. Fn2 (Component o (a -> b)) (Component o a) (Component o b)
 
+-- Components where the first type argument is `{}` form an applicative. `pure
+-- a` returns a component that does nothing but with the empty record `{}` as
+-- explicit output and with `a` as output.
+instance applicativeComponent :: (RL.RowToList row RL.Nil) => Applicative (Component { | row }) where
+  pure = _pure
+
+foreign import _pure :: forall a row. RL.RowToList row RL.Nil => a -> Component { | row } a
+
 instance bindComponent :: Bind (Component o) where
   bind = runFn2 _bind
 
 foreign import _bind :: forall o a b. Fn2 (Component o a) (a -> Component o b) (Component o b)
+
+instance monadComponent :: (RL.RowToList row RL.Nil) => Monad (Component { | row })
 
 modelView :: forall o p a x. (o -> x -> Now p) -> (p -> x -> Component o a) -> (x -> Component {} p)
 modelView m v = runFn2 _modelView (mkFn2 m) (mkFn2 v)

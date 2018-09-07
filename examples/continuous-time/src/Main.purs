@@ -2,13 +2,14 @@ module Main where
 
 import Prelude
 
+import Effect (Effect)
 import Hareactive.Types (Behavior, Stream, Now)
 import Hareactive.Combinators (time, sample, stepper, snapshot)
 import Data.Array (head)
 import Data.Maybe (fromMaybe)
 import Data.String (split, Pattern(..))
 import Data.JSDate (fromTime, toTimeString)
-import Turbine (Component, runComponent, dynamic, output, modelView, (</>))
+import Turbine (Component, runComponent, output, modelView, (</>))
 import Turbine.HTML.Elements as E
 
 formatTime :: Number -> String
@@ -19,7 +20,7 @@ type AppModelOut =
   , message :: Behavior String
   }
 
-type AppViewOut = {snapClick :: Stream Unit}
+type AppViewOut = { snapClick :: Stream Unit }
 
 appModel :: AppViewOut -> Unit -> Now AppModelOut
 appModel { snapClick } _ = do
@@ -29,13 +30,14 @@ appModel { snapClick } _ = do
   message <- sample $ stepper "You've not clicked the button yet" msgFromClick
   pure {time, message}
 
-appView :: AppModelOut -> Unit -> Component _ AppViewOut
+appView :: AppModelOut -> Unit -> Component AppViewOut _
 appView { message, time } _ =
   E.h1_ (E.text "Continuous") </>
   E.p_ (E.textB $ formatTime <$> time) </>
-  E.button_ (E.text "Click to snap time") `output` (\o -> {snapClick: o.click}) </>
+  E.button_ (E.text "Click to snap time") `output` (\o -> { snapClick: o.click }) </>
   E.p_ (E.textB message)
 
 app = modelView appModel appView unit
 
+main :: Effect Unit
 main = runComponent "#mount" app

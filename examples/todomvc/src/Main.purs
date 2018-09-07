@@ -116,7 +116,7 @@ todoAppModel input _ = do
   )
   pure { todos, items: input.items }
 
-todoAppView :: TodoAppModelOut -> Unit -> Component TodoAppViewOut TodoAppViewOut
+todoAppView :: TodoAppModelOut -> Unit -> Component TodoAppViewOut _
 todoAppView input _ =
   E.section { class: E.staticClass "todoapp" } (
     E.header { class: E.staticClass "header" } (

@@ -8,7 +8,7 @@ import Hareactive.Types (Behavior, Stream, Now)
 import Hareactive.Combinators (changes, filterJust, sample, stepper)
 import Turbine (Component, modelView, output, runComponent, (</>))
 import Turbine.HTML.Elements as E
-import Turbine.HTML.Properties as P
+--import Turbine.HTML.Properties as P
 
 type AppModelOut =
   { fahren :: Behavior Number
@@ -34,18 +34,20 @@ appModel { fahrenChange, celsiusChange } _ =
     fahren <- sample $ stepper 0.0 (fahrenNrChange <> (celsiusToFahren <$> celsiusNrChange))
     pure { fahren, celsius }
 
-appView :: AppModelOut -> Unit -> Component _ _
-appView { celsius, fahren } _ =
-  E.div_ (
-    E.div_ (
-      E.label_ (E.text "Fahrenheit") </> --[ P.attribute "value" fahren ]
-      E.input { value: show <$> fahren } `output` (\o -> { fahrenInput: o.inputValue })
-    ) </>
-    E.div_ (
-      E.label_ (E.text "Celsius") </> --[ P.attribute "value" celsius ]
-      E.input { value: show <$> celsius } `output` (\o -> { celsiusInput: o.inputValue })
-    )
-  ) `output` (\o -> { fahrenChange: changes o.fahrenInput, celsiusChange: changes o.celsiusInput })
+appView :: AppModelOut -> Unit -> Component AppViewOut _
+appView { celsius, fahren } _ = modelView model view {} `output` (\o -> { fahrenChange: changes o.fahrenInput, celsiusChange: changes o.celsiusInput })
+  where
+    model { fahrenInput, celsiusInput } _ = pure { fahrenInput: fahrenInput, celsiusInput: celsiusInput }
+    view _ _ = E.div_ (
+      E.div_ (
+        E.label_ (E.text "Fahrenheit") </> --[ P.attribute "value" fahren ]
+        E.input { value: show <$> fahren } `output` (\o -> { fahrenInput: o.inputValue })
+      ) </>
+      E.div_ (
+        E.label_ (E.text "Celsius") </> --[ P.attribute "value" celsius ]
+        E.input { value: show <$> celsius } `output` (\o -> { celsiusInput: o.inputValue })
+      )
+    ) 
 
 app :: Component {} AppModelOut
 app = modelView appModel appView unit

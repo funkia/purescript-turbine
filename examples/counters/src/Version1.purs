@@ -22,7 +22,7 @@ counterModel { increment, decrement } id = do
   count <- sample $ scan (+) 0 changes
   pure { count }
 
-counterView :: CounterOut -> Int -> Component _ CounterViewOut
+counterView :: CounterOut -> Int -> Component CounterViewOut _
 counterView {count} _ =
   E.div_ (
     E.text "Counter " </>

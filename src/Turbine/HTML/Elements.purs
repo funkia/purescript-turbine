@@ -62,7 +62,6 @@ import Record as R
 import Turbine (Component)
 import Type.Data.RowList (RLProxy(..))
 import Type.Row (type (+))
-import Web.Event.Event (Event)
 import Web.UIEvent.FocusEvent (FocusEvent)
 import Web.UIEvent.KeyboardEvent (KeyboardEvent)
 import Web.UIEvent.InputEvent (InputEvent)

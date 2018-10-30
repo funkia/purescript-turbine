@@ -27,7 +27,7 @@ type AppViewOut = { email :: Behavior String }
 appModel :: AppViewOut -> Unit -> Now AppModelOut
 appModel { email } _ = pure { isValid: isValidEmail <$> email }
 
-appView :: AppModelOut -> Unit -> Component AppViewOut AppViewOut
+appView :: AppModelOut -> Unit -> Component AppViewOut _
 appView { isValid } _ =
   E.h1_ (E.text "Email validator") </>
   E.input_ `output` (\o -> { email: o.inputValue }) </>

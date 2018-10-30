@@ -76,7 +76,11 @@ foreign import _runComponent :: forall o a. EffectFn2 String (Component o a) Uni
 -- | Turns a behavior of a component into a component of a behavior. This
 -- | function is used to create dynamic HTML where the structure of the HTML
 -- | should change over time.
-foreign import dynamic :: forall o a. Behavior (Component o a) -> Component {} (Behavior a)
+-- |
+-- | ```purescript
+-- | dynamic (map (\b -> if b else (div {} ) then) behavior)
+-- | ```
+foreign import dynamic :: forall o a. Behavior (Component o a) -> Component {} (Behavior o)
 
 -- | Type class implemented by `Int`, `Number`, and `String`. Used to represent
 -- | overloads.
@@ -100,10 +104,10 @@ foreign import _list :: forall a o p k. Key k =>
   Fn3 (a -> Component o p) (Behavior (Array a)) (a -> k) (Component {} (Behavior (Array o)))
 
 -- | Combines two components and merges their explicit output.
-merge :: forall a o b p q. Union o p q => Component { | o } a -> Component { | p } b -> Component { | q } { | q }
+merge :: forall a o b p q. Union o p q => Component { | o } a -> Component { | p } b -> Component { | q } {}
 merge = runFn2 _merge
 
-foreign import _merge :: forall a o b p q. Union o p q => Fn2 (Component { | o } a) (Component { | p } b) (Component { | q } { | q })
+foreign import _merge :: forall a o b p q. Union o p q => Fn2 (Component { | o } a) (Component { | p } b) (Component { | q } {})
 infixl 0 merge as </>
 
 -- | Copies non-explicit output into explicit output.

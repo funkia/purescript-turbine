@@ -1,4 +1,4 @@
-module Main where
+module ContinousTime.Main where
 
 import Prelude
 

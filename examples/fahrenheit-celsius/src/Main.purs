@@ -1,4 +1,4 @@
-module Main where
+module FahrenheitCelsius.Main where
 
 import Prelude
 

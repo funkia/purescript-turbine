@@ -4,7 +4,7 @@ import Prelude
 
 import Effect (Effect)
 import Data.Either (fromRight)
-import Hareactive.Types (Behavior, Now)
+import Hareactive.Types (Behavior)
 import Data.String.Regex (Regex, regex, test)
 import Data.String.Regex.Flags (ignoreCase)
 import Partial.Unsafe (unsafePartial)
@@ -18,26 +18,20 @@ isValidEmail :: String -> Boolean
 isValidEmail = test emailRegex
 
 validToString :: Boolean -> String
-validToString b = if b then "valid" else "invalid"
-
-type AppModelOut = { isValid :: Behavior Boolean }
-
-type AppViewOut = { email :: Behavior String }
-
-appModel :: AppViewOut -> Unit -> Now AppModelOut
-appModel { email } _ = pure { isValid: isValidEmail <$> email }
-
-appView :: AppModelOut -> Unit -> Component AppViewOut _
-appView { isValid } _ =
-  E.h1_ (E.text "Email validator") </>
-  E.input_ `output` (\o -> { email: o.inputValue }) </>
-  E.p_ (
-    E.text "Email is " </>
-    E.textB (validToString <$> isValid)
-  )
+validToString = if _ then "valid" else "invalid"
 
 app :: Component {} { isValid :: Behavior Boolean }
-app = modelView appModel appView unit
+app = modelView model view unit
+  where
+    model { email } _ =
+      pure { isValid: isValidEmail <$> email }
+    view { isValid } _ =
+      E.h1_ (E.text "Email validator") </>
+      E.input_ `output` (\o -> { email: o.inputValue }) </>
+      E.p_ (
+        E.text "Email is " </>
+        E.textB (validToString <$> isValid)
+      )
 
 main :: Effect Unit
 main = runComponent "#mount" app

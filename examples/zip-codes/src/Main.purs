@@ -1,4 +1,4 @@
-module Main where
+module ZipCodes.Main where
 
 import Prelude
 

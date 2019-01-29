@@ -1,11 +1,20 @@
 # purescript-turbine
 
-Turbine is a purely functional frontend framework powered by FRP.
+[![Turbine on Pursuit](https://pursuit.purescript.org/packages/purescript-turbine/badge)](https://pursuit.purescript.org/packages/purescript-turbine)
+[![Build status](https://travis-ci.org/funkia/purescript-turbine.svg?branch=master)](https://travis-ci.org/funkia/purescript-turbine)
+
+Turbine is a purely functional frontend framework powered by classic FRP.
 
 * Concise and powerful thanks to FRP.
 * No big global state/model. Everything is incapsulated in components.
 * Type-safe communication between views and models.
 * Model logic and view code is kept seperate for logic-less views.
+
+## Table of contents
+
+* [Examples](#examples)
+* [Installation](#installation)
+* [Tutorial](#tutorial)
 
 ## Examples
 
@@ -78,3 +87,18 @@ counterList = modelView counterListModel counterListView
 
 main = runComponent "#mount" (counterList [0])
 ```
+
+## Installation
+
+The following installs Hareactive and Turbine. Hareactive is the FRP library
+that Turbine builds upon and is a hard dependency.
+
+```
+npm i @funkia/hareactive
+bower install --save purescript-hareactive
+npm i @funkia/turbine
+bower install --save purescript-turbine
+```
+
+## Tutorial
+

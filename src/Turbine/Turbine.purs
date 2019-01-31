@@ -41,8 +41,6 @@ instance semigroupComponent :: Semigroup a => Semigroup (Component o a) where
 instance monoidComponent :: (Monoid a, RL.RowToList row RL.Nil) => Monoid (Component { | row } a) where
   mempty = pure mempty
 
-foreign import emptyComponent :: forall row. (RL.RowToList row RL.Nil) => Component { | row } { | row }
-
 instance functorComponent :: Functor (Component o) where
   map = runFn2 _map
 

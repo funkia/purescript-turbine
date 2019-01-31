@@ -96,3 +96,5 @@ exports._text = T.text;
 exports._textB = T.dynamic;
 
 exports.br = T.elements.br;
+
+exports.empty = T.emptyComponent;

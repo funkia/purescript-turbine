@@ -1,5 +1,7 @@
 module Turbine.HTML.Elements
-  ( h1
+  ( Attributes'
+  , Output'
+  , h1
   , h1_
   , div
   , div_
@@ -14,6 +16,10 @@ module Turbine.HTML.Elements
   , li_
   , span
   , span_
+  , InputAttrs'
+  , InputAttrs
+  , InputOut'
+  , InputOut
   , input
   , input_
   , textarea
@@ -38,6 +44,7 @@ module Turbine.HTML.Elements
   , tr_
   , td
   , td_
+  , empty
   , class Subrow
   , class RecordOf
   , class RecordOfGo
@@ -337,3 +344,5 @@ foreign import _td :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Compo
 
 foreign import br :: Component {} Unit
 
+-- | An empty component corresponding to no HTML nor effects.
+foreign import empty :: Component {} Unit

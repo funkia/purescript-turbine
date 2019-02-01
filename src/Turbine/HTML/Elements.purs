@@ -237,6 +237,7 @@ foreign import _a :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Compon
 
 type InputAttrs' r =
   ( placeholder :: Behavior String
+  , type :: Behavior String
   , value :: Behavior String
   , autofocus :: Behavior Boolean
   | Attributes' + r
@@ -245,7 +246,7 @@ type InputAttrs' r =
 type InputAttrs = InputAttrs' ()
 
 type InputOut' r =
-  ( inputValue :: Behavior String
+  ( value :: Behavior String
   , input :: Stream InputEvent
   , keyup :: Stream KeyboardEvent
   | Output' + r

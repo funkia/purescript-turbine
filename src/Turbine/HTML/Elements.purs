@@ -53,8 +53,8 @@ module Turbine.HTML.Elements
   , ClassDescription
   , ClassElement
   , staticClass
-  , toggleClass
   , dynamicClass
+  , toggleClass
   ) where
 
 import Prelude hiding (div)
@@ -108,12 +108,44 @@ foreign import data ClassElement :: Type
 
 newtype ClassDescription = ClassDescription (Array ClassElement)
 
+-- | Creates a static class from a string of space separated class names.
+-- |
+-- | ```purescript
+-- | staticClass "foo bar baz"
+-- | ```
 foreign import staticClass :: String -> ClassDescription
 
+-- | Creates a dynamic class from a string valued behavior. At any point in time
+-- | the element will have the class named in the behavior at that point in
+-- | time.
+-- |
+-- | ```purescript
+-- | dynamicClass "foo bar baz"
+-- | ```
+foreign import dynamicClass :: Behavior String -> ClassDescription
+
+-- | Takes a record of boolean valued behaviors. Each key or field in the record
+-- | is interpreted as a class name. When a behavior is `true` the class
+-- | corresponding to the behavior is added to the element and when it is
+-- | `false` it does not exist on the element.
+-- |
+-- | ```purescript
+-- | toggleClass
+-- |   { active: isActiveBehavior
+-- |   , selected: isSelectedBehavior
+-- |   }
+-- | ```
 foreign import toggleClass :: forall r. RecordOf (Behavior Boolean) r => { | r } -> ClassDescription
 
-foreign import dynamicClass :: forall r. RecordOf (Behavior String) r => { | r } -> ClassDescription
-
+-- | Class descriptions form a semigroup. This makes it convenient to combine
+-- | several types of description and add them to the same element.
+-- |
+-- | ```purescript
+-- | E.div { class: staticClass "foo"
+-- |                <> dynamicClass beh
+-- |                <> toggleClass { selected: isSelected }
+-- |       }
+-- | ```
 derive newtype instance semigroupClassDescription :: Semigroup ClassDescription
 
 -- Elements

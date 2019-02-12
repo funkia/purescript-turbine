@@ -2,15 +2,15 @@ var T = require('@funkia/turbine');
 
 // Function for class descriptions
 
-exports.staticClass = function(a) {
+function arrayOf(a) {
   return [a];
-};
+}
+
+exports.staticClass = arrayOf;
+
+exports.dynamicClass = arrayOf;
 
 exports.toggleClass = function() {
-  return function(o) { return [o]; };
-};
-
-exports.dynamicClass = function() {
   return function(o) { return [o]; };
 };
 

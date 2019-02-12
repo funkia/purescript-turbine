@@ -1,0 +1,22 @@
+{
+  "name": "purescript-turbine-examples",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "output"
+  ],
+  "dependencies": {
+    "purescript-prelude": "^4.1.0",
+    "purescript-console": "^4.1.0",
+    "purescript-functions": "^4.0.0",
+    "purescript-record": "^1.0.0",
+    "purescript-strings": "^4.0.0",
+    "purescript-hareactive": "^0.0.5",
+    "purescript-numbers": "^6.0.0",
+    "purescript-turbine": "../"
+  },
+  "devDependencies": {
+    "purescript-psci-support": "^4.0.0"
+  }
+}

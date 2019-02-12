@@ -1,0 +1,13 @@
+{
+  "name": "purescript-turbine-examples",
+  "scripts": {
+    "postinstall": "bower install",
+    "email-validator": "pulp browserify --main Main --include email-validator/src --to email-validator/bundle.js",
+    "counters": "pulp browserify --main Counters.Main --include counters/src --to counters/bundle.js",
+    "fahrenheit-celsius": "pulp browserify --main FahrenheitCelsius.Main --include fahrenheit-celsius/src --to fahrenheit-celsius/bundle.js",
+    "todomvc": "pulp browserify --main TodoMVC.Main --include todomvc/src --to todomvc/bundle.js",
+    "timer": "pulp browserify --main Timer.Main --include timer/src --to timer/bundle.js",
+    "zip-codes": "pulp browserify --main ZipCodes.Main --include zip-codes/src --to zip-codes/bundle.js",
+    "continuous-time": "pulp browserify --main ContinousTime.Main --include continuous-time --to continuous-time/bundle.js"
+  }
+}

@@ -1,0 +1,12 @@
+language: node_js
+sudo: required
+node_js:
+  - "8"
+install:
+  - npm install -g bower pulp purescript
+  - npm install
+script:
+  - bower install --production
+  - npm run build
+  - bower install
+  - npm test

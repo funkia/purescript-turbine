@@ -7,8 +7,8 @@ import Prelude
 import Control.Apply (lift2)
 import Data.Array (cons, filter)
 import Data.Foldable (fold, foldr)
+import Hareactive.Combinators (scan, scanS, switchStream)
 import Hareactive.Types (Behavior, Stream, Now)
-import Hareactive.Combinators (sample, scan, scanS, switchStream)
 import Turbine (Component, list, modelView, output, static, (</>))
 import Turbine.HTML.Elements as E
 
@@ -25,10 +25,10 @@ type CounterViewOut =
 counterModel :: CounterViewOut -> Int -> (Now CounterOut)
 counterModel { increment, decrement, delete } id = do
   let changes = (increment $> 1) <> (decrement $> -1)
-  count <- sample $ scan (+) 0 changes
+  count <- scan (+) 0 changes
   pure { count, delete: delete $> id }
 
-counterView :: CounterOut -> Int -> Component CounterViewOut CounterViewOut
+counterView :: CounterOut -> Int -> Component CounterViewOut _
 counterView { count } _ =
   E.div { class: E.staticClass "foo bar" } (
     E.text "Counter " </>
@@ -53,17 +53,16 @@ type ListViewOut =
 counterListModel :: ListViewOut -> Array Int -> Now ListOut
 counterListModel { addCounter, listOut } init = do
   let sum = listOut >>= (map (_.count) >>> foldr (lift2 (+)) (pure 0))
-
   let removeId = map (fold <<< map (_.delete)) listOut
   let removeCounter = map (\i -> filter (i /= _)) (switchStream removeId)
 
-  nextId <- sample $ scanS (+) 0 (addCounter $> 1)
+  nextId <- scanS (+) 0 (addCounter $> 1)
   let appendCounter = cons <$> nextId
 
-  counterIds <- sample $ scan ($) init (appendCounter <> removeCounter)
+  counterIds <- scan ($) init (appendCounter <> removeCounter)
   pure { sum, counterIds }
 
-counterListView :: ListOut -> Array Int -> Component _ ListViewOut
+counterListView :: ListOut -> Array Int -> Component ListViewOut _
 counterListView { sum, counterIds } _ =
   E.div_ (
     E.h1_ (E.text "Counters") </>

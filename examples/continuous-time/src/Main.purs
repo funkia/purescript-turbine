@@ -27,7 +27,7 @@ appModel { snapClick } _ = do
   let msgFromClick =
         map (\t -> "You last pressed the button at " <> formatTime t)
             (snapshot time snapClick)
-  message <- sample $ stepper "You've not clicked the button yet" msgFromClick
+  message <- stepper "You've not clicked the button yet" msgFromClick
   pure {time, message}
 
 appView :: AppModelOut -> Unit -> Component AppViewOut _

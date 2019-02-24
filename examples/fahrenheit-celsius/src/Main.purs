@@ -5,7 +5,7 @@ import Prelude
 import Data.Number (fromString)
 import Effect (Effect)
 import Hareactive.Types (Behavior, Stream, Now)
-import Hareactive.Combinators (changes, filterJust, sample, stepper)
+import Hareactive.Combinators (changes, filterJust, stepper)
 import Turbine (Component, modelView, output, runComponent, (</>))
 import Turbine.HTML.Elements as E
 
@@ -29,8 +29,8 @@ appModel { fahrenChange, celsiusChange } _ =
     celsiusNrChange = parseNumbers celsiusChange
     fahrenNrChange = parseNumbers fahrenChange
   in do
-    celsius <- sample $ stepper 0.0 (celsiusNrChange <> (fahrenToCelsius <$> fahrenNrChange))
-    fahren <- sample $ stepper 0.0 (fahrenNrChange <> (celsiusToFahren <$> celsiusNrChange))
+    celsius <- stepper 0.0 (celsiusNrChange <> (fahrenToCelsius <$> fahrenNrChange))
+    fahren <- stepper 0.0 (fahrenNrChange <> (celsiusToFahren <$> celsiusNrChange))
     pure { fahren, celsius }
 
 appView :: AppModelOut -> Unit -> Component _ _
@@ -38,11 +38,11 @@ appView { celsius, fahren } _ =
   E.div_ (
     E.div_ (
       E.label_ (E.text "Fahrenheit") </>
-      E.input { value: show <$> fahren } `output` (\o -> { fahrenChange: changes o.inputValue })
+      E.input { value: show <$> fahren } `output` (\o -> { fahrenChange: changes o.value })
     ) </>
     E.div_ (
       E.label_ (E.text "Celsius") </>
-      E.input { value: show <$> celsius } `output` (\o -> { celsiusChange: changes o.inputValue })
+      E.input { value: show <$> celsius } `output` (\o -> { celsiusChange: changes o.value })
     )
   )
 

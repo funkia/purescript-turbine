@@ -20,7 +20,7 @@ type AppModelOut = {version :: Behavior (Component {} {})}
 
 appModel :: AppViewOut -> Unit -> Now AppModelOut
 appModel input _ = do
-  version <- sample $ stepper One (input.selectVersion1 <> input.selectVersion2)
+  version <- stepper One (input.selectVersion1 <> input.selectVersion2)
   pure { version: versionToComponent <$> version }
 
 type AppViewOut =
@@ -28,10 +28,10 @@ type AppViewOut =
   , selectVersion2 :: Stream Version
   }
 
-appView :: AppModelOut -> Unit -> Component _ AppViewOut
+appView :: AppModelOut -> Unit -> Component AppViewOut _
 appView out _ =
-  E.button_ (E.text "Version 1") `output` (\o -> { selectVersion1: o.click $> One }) </>
-  E.button_ (E.text "Version 2") `output` (\o -> { selectVersion2: o.click $> Two }) </>
+  E.button {} (E.text "Version 1") `output` (\o -> { selectVersion1: o.click $> One }) </>
+  E.button {} (E.text "Version 2") `output` (\o -> { selectVersion2: o.click $> Two }) </>
   (dynamic out.version)
 
 app = modelView appModel appView unit

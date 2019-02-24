@@ -14,7 +14,7 @@ import Effect.Console (log)
 import Partial.Unsafe (unsafePartial)
 import Data.Tuple (Tuple(..))
 import Hareactive.Types (Behavior, Stream, Now)
-import Hareactive.Combinators (changes, split, filterJust, sample, stepper, filter, runStreamAff)
+import Hareactive.Combinators (changes, split, filterJust, stepper, filter, runStreamAff)
 import Network.HTTP.Affjax as AX
 import Network.HTTP.Affjax.Response as AXRes
 import Network.HTTP.StatusCode (StatusCode(..))
@@ -58,7 +58,7 @@ zipModel { zipCode } _ = do
       (invalidZipCodeChange $> "Not a valid zip code") <>
       (validZipCodeChange $> "Loading ...") <>
       (filterJust $ hush <$> fetchResult)
-  status <- sample $ stepper "" statusChange
+  status <- stepper "" statusChange
   pure { status }
 
 zipView { status } _ =

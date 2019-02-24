@@ -12,7 +12,7 @@
     "purescript-functions": "^4.0.0",
     "purescript-record": "^1.0.0",
     "purescript-strings": "^4.0.0",
-    "purescript-hareactive": "^0.0.5",
+    "purescript-hareactive": "^0.0.8",
     "purescript-numbers": "^6.0.0",
     "purescript-turbine": "../"
   },

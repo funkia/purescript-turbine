@@ -102,11 +102,11 @@ bower install --save purescript-turbine
 
 ## Tutorial
 
-This is a hands-on tutorial in which we will build a simple application. The
-core concepts in Turbine is introduced along the way. Turbine is a framework
-based on functional reactive programming (FRP). In particular it uses the FRP
-library Hareactive. This tutorial assumes no prior experience with FRP and hence
-it can also serve as a basic introduction to FRP and Hareactive.
+This is a hands-on tutorial in which we build a simple application. The core
+concepts in Turbine are introduced along the way. Turbine is based on functional
+reactive programming (FRP). In particular it uses the FRP library
+Hareactive. This tutorial assumes no prior experience with FRP and hence it can
+also be seen as an introduction to FRP.
 
 If you want to you can follow along the tutorial yourself. You can do so by
 cloning the Turbine starter template.
@@ -123,11 +123,12 @@ make changes to the file `src/Main.purs`.
 
 ### Component
 
-The central type in Turbine is `Component`. A `Component` represents a piece of
-user interface. For instance that might be an input field or a button.
-Components are composable. Hence an input field and a button can be composed
-together and the result is another component. A Turbine application is
-"components all the way down".
+The central type in Turbine is `Component`. A `Component` represents
+a piece of user interface. For instance, that could be an input field or
+a button. More concretely a `Component` is a description on how to create
+a piece of HTML. Components are composable. Hence an input field and
+a button can be composed together and the result is another component.
+A Turbine application is "components all the way down".
 
 The `Component` type has the following kind.
 
@@ -141,18 +142,19 @@ later.
 ### Creating simple HTML
 
 Turbine contains functions for creating components that correspond to single
-HTML elements. These live in the module `Turbine.HTML.Elements` which we
+HTML elements. These live in the module `Turbine.HTML.Elements` which is
 typically import qualified like this.
 
 ```purescript
 import Turbine.HTML.Elements as E
 ```
 
-For each HTML element the module exports a corresponding function. For instance,
-for the HTML elemnent `div` there is a function `div`. The first argument to
-these functions is a record of attributes. If the HTML element supports children
-then the corresponding function takes a second argument as well which is a
-component. Here are a few examples.
+For each HTML element the module exports a corresponding function.  For the
+HTML element `div` there is a function `div`, for the `span` element there is a
+`span` function, and so on. The first argument to these functions is a record
+of attributes. If the HTML element supports children then the corresponding
+function takes a second argument as well which is a component. Here are a few
+examples.
 
 ```purescript
 myInput = E.input { placeholder: "Write here", class: "form-input" }
@@ -160,12 +162,15 @@ myButton = E.button {} (E.text "Click me")
 myDivWithButton = E.div { class: "div-class" } myButton
 ```
 
+The `text` function used above takes a string an returns a component
+corressponding to a text node of the string.
+
 Components are composed together with the `</>` operator. As a first
-approximation the `</>` is similar to the semigroup operator `<>`. However,
-`</>` has special handling for the information in the `Component` data type.
-Writing `component1 </> component2` creates a new component which represents the
-HTML from the first component followed by the HTML for the second
-component. Here is an example.
+approximation `</>` is similar to the semigroup operator `<>`. However, the
+type of `</>` is slightly different as we will see later. Writing `component1
+</> component2` creates a new component which represents the HTML from the
+first component followed by the HTML for the second component. Here is an
+example.
 
 ```purescript
 const myLoginForm =
@@ -197,7 +202,7 @@ component as their second argument we can create arbitrary HTML. Now, let us
 create the HTML which we will use going forward.
 
 ```purescript
-counterView { count } = 
+counterView = 
   E.div {} (
     E.text "Counter " </>
     E.span {} (E.text "0") </>
@@ -211,22 +216,57 @@ outcome is that the displayed number is dynamic and increments every time the
 `+` button is pressed and decrements every time the `-` button is pressed. But,
 before we can implement that we need to learn a little bit of FRP.
 
-### An interlude on FRP
+### A short interlude on FRP
 
 Functional reactive programming contains two key data-types `Behavior` and
 `Stream`.
 
-> Note: What we call `Stream` here is often called `Event` in other FRP
-> libraries.
+> Note: What we call `Stream` is often called `Event` in other FRP libraries.
 
-A behavior represents a value that changes over time. For instance, `Behavior
-Number` represents a changing number and `Behavior String` represents a varying
-string.
+A `Behavior` represents a value that changes over time. For instance, `Behavior
+Number` represents a changing number and `Behavior String` represents a
+changing string.
 
 A `Stream` represents events or occurrences that happens at specific moments in
 time.
 
+The difference between behaviors and streams can be illustrated as below.
+
+![illustration of behavior and stream](resources/behaviorstream.svg)
+
+As the image indicates a behavior can be seen a function from time. That
+is, at any specific moment in time it has a value. A stream on the other
+hand only has values, or occurrences, at specific punctuations in time.
+
+### Dynamic HTML
+
+In the counter component above we hard-coded the value `0` into the view.
+The goal is that the displayed number should _change over time_. And, as
+mentioned, in FRP we use behaviors to represent values that change over
+time. Thus, we parametize the HTML above such that it takes as agument
+a record of a behavior of the type `Behavior Number`.
+
+```purescript
+counterView { count } = 
+  E.div {} (
+    E.text "Counter " </>
+    E.span {} (E.textB (map show count)) </>
+    E.button {} (E.text "+") </>
+    E.button {} (E.text "-")
+  )
+```
+
+We also changed `E.text "0"` into `E.textB (map show count)`. The `textB`
+function is similar to `text` except that instead of taking an argument of
+type `String` it takes an argument of type `Behavior String.` It then
+returns a component that describes _dynamic HTML_. At any point in time
+the value of the text node will have the same value as the behavior.
+
 ### Output
+
+Recall that the `Component` type is parameterized by two types. The first
+of these is called the components _selected output_ and the second is
+called the _available output_.
 
 ### Model view
 

@@ -8,10 +8,10 @@ import Control.Apply (lift2)
 import Data.Array (cons, filter)
 import Data.Foldable (fold, foldr)
 import Hareactive.Types (Behavior, Stream, Now)
-import Hareactive.Combinators (sample, scan, switchStream)
+import Hareactive.Combinators (scan, switchStream)
 import Data.Monoid ((<>))
 import Turbine (Component, runComponent, output, modelView, (</>), list)
-import Turbine.HTML.Elements as E
+import Turbine.HTML as H
 
 type CounterOut = {count :: Behavior Int}
 type CounterViewOut = {increment :: Stream Unit, decrement :: Stream Unit}
@@ -24,11 +24,11 @@ counterModel { increment, decrement } id = do
 
 counterView :: CounterOut -> Int -> Component CounterViewOut _
 counterView {count} _ =
-  E.div {} (
-    E.text "Counter " </>
-    E.span {} (E.textB $ map show count) </>
-    E.button {} (E.text "+" ) `output` (\o -> { increment: o.click }) </>
-    E.button {} (E.text "-" ) `output` (\o -> { decrement: o.click })
+  H.div {} (
+    H.text "Counter " </>
+    H.span {} (H.textB $ map show count) </>
+    H.button {} (H.text "+" ) `output` (\o -> { increment: o.click }) </>
+    H.button {} (H.text "-" ) `output` (\o -> { decrement: o.click })
   )
 
 counter :: Int -> Component {} CounterOut

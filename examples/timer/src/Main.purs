@@ -7,7 +7,7 @@ import Hareactive.Combinators as H
 import Hareactive.Types (Behavior, Stream)
 import Math as Math
 import Turbine (Component, modelView, output, runComponent, static, withStatic, (</>))
-import Turbine.HTML.Elements as E
+import Turbine.HTML as H
 
 resetOn :: forall a b. Behavior (Behavior a) -> Stream b -> Behavior (Behavior a)
 resetOn b reset = b >>= \bi -> H.switcherB bi (H.snapshot b reset)
@@ -23,19 +23,19 @@ timer = modelView model view unit
       elapsed <- H.sample $ resetOn (H.integrateB change) input.resetTimer
       pure { maxTime: input.maxTime, elapsed }
     view input _ =
-      E.div {} (
-        E.h1 {} (E.text "Timer") </>
-        E.span {} (E.text "0") </>
-        E.progress { value: input.elapsed, max: input.maxTime } (E.empty) </>
-        E.span {} (E.textB (show <$> input.maxTime)) </>
-        E.div {} (
-          E.text "Elapsed seconds: " </>
-          E.textB (show <$> Math.round <$> input.elapsed)
+      H.div {} (
+        H.h1 {} (H.text "Timer") </>
+        H.span {} (H.text "0") </>
+        H.progress { value: input.elapsed, max: input.maxTime } (H.empty) </>
+        H.span {} (H.textB (show <$> input.maxTime)) </>
+        H.div {} (
+          H.text "Elapsed seconds: " </>
+          H.textB (show <$> Math.round <$> input.elapsed)
         ) </>
-        E.inputRange (static { value: show initialMaxTime, type: "range", min: 0.0, max: 60.0 })
+        H.inputRange (static { value: show initialMaxTime, type: "range", min: 0.0, max: 60.0 })
           `output` (\o -> { maxTime: o.value }) </>
-        E.div {} (
-          E.button {} (E.text "Reset") `output` (\o -> { resetTimer: o.click })
+        H.div {} (
+          H.button {} (H.text "Reset") `output` (\o -> { resetTimer: o.click })
         )
       ) `output` (\o -> { elapsed: input.elapsed })
 

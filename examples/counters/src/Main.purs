@@ -6,9 +6,9 @@ import Effect (Effect)
 import Counters.Version1 as Version1
 import Counters.Version2 as Version2
 import Hareactive.Types (Behavior, Stream, Now)
-import Hareactive.Combinators (sample, stepper)
+import Hareactive.Combinators (stepper)
 import Turbine (Component, runComponent, dynamic, output, modelView, (</>))
-import Turbine.HTML.Elements as E
+import Turbine.HTML as H
 
 data Version = One | Two
 
@@ -28,10 +28,10 @@ type AppViewOut =
   , selectVersion2 :: Stream Version
   }
 
-appView :: AppModelOut -> Unit -> Component AppViewOut _
+appView :: AppModelOut -> Unit -> Component AppViewOut {}
 appView out _ =
-  E.button {} (E.text "Version 1") `output` (\o -> { selectVersion1: o.click $> One }) </>
-  E.button {} (E.text "Version 2") `output` (\o -> { selectVersion2: o.click $> Two }) </>
+  H.button {} (H.text "Version 1") `output` (\o -> { selectVersion1: o.click $> One }) </>
+  H.button {} (H.text "Version 2") `output` (\o -> { selectVersion2: o.click $> Two }) </>
   (dynamic out.version)
 
 app = modelView appModel appView unit

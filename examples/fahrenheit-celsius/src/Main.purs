@@ -7,7 +7,7 @@ import Effect (Effect)
 import Hareactive.Types (Behavior, Stream, Now)
 import Hareactive.Combinators (changes, filterJust, stepper)
 import Turbine (Component, modelView, output, runComponent, (</>))
-import Turbine.HTML.Elements as E
+import Turbine.HTML as H
 
 type AppModelOut =
   { fahren :: Behavior Number
@@ -35,14 +35,14 @@ appModel { fahrenChange, celsiusChange } _ =
 
 appView :: AppModelOut -> Unit -> Component _ _
 appView { celsius, fahren } _ =
-  E.div {} (
-    E.div {} (
-      E.label {} (E.text "Fahrenheit") </>
-      E.input { value: show <$> fahren } `output` (\o -> { fahrenChange: changes o.value })
+  H.div {} (
+    H.div {} (
+      H.label {} (H.text "Fahrenheit") </>
+      H.input { value: show <$> fahren } `output` (\o -> { fahrenChange: changes o.value })
     ) </>
-    E.div {} (
-      E.label {} (E.text "Celsius") </>
-      E.input { value: show <$> celsius } `output` (\o -> { celsiusChange: changes o.value })
+    H.div {} (
+      H.label {} (H.text "Celsius") </>
+      H.input { value: show <$> celsius } `output` (\o -> { celsiusChange: changes o.value })
     )
   )
 

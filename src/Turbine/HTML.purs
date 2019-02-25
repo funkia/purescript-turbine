@@ -2,9 +2,9 @@
 -- |
 -- | This module is typically imported qualified as.
 -- | ```purescript
--- | import Turbine.HTML.Elements as E
+-- | import Turbine.HTML as H
 -- | ```
-module Turbine.HTML.Elements
+module Turbine.HTML
   ( Attributes'
   , Output'
   , h1

@@ -10,7 +10,7 @@ import Data.Maybe (fromMaybe)
 import Data.String (split, Pattern(..))
 import Data.JSDate (fromTime, toTimeString)
 import Turbine (Component, runComponent, output, modelView, (</>))
-import Turbine.HTML.Elements as E
+import Turbine.HTML as H
 
 formatTime :: Number -> String
 formatTime = fromTime >>> toTimeString >>> split (Pattern " ") >>> head >>> fromMaybe ""
@@ -32,10 +32,10 @@ appModel { snapClick } _ = do
 
 appView :: AppModelOut -> Unit -> Component AppViewOut _
 appView { message, time } _ =
-  E.h1 {} (E.text "Continuous") </>
-  E.p {} (E.textB $ formatTime <$> time) </>
-  E.button {} (E.text "Click to snap time") `output` (\o -> { snapClick: o.click }) </>
-  E.p {} (E.textB message)
+  H.h1 {} (H.text "Continuous") </>
+  H.p {} (H.textB $ formatTime <$> time) </>
+  H.button {} (H.text "Click to snap time") `output` (\o -> { snapClick: o.click }) </>
+  H.p {} (H.textB message)
 
 app = modelView appModel appView unit
 

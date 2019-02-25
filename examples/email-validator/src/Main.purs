@@ -9,7 +9,7 @@ import Data.String.Regex (Regex, regex, test)
 import Data.String.Regex.Flags (ignoreCase)
 import Partial.Unsafe (unsafePartial)
 import Turbine (Component, runComponent, output, modelView, (</>))
-import Turbine.HTML.Elements as E
+import Turbine.HTML as H
 
 emailRegex :: Regex
 emailRegex = unsafePartial $ fromRight $ regex ".+@.+\\..+" ignoreCase
@@ -26,11 +26,11 @@ app = modelView model view unit
     model { email } _ =
       pure { isValid: isValidEmail <$> email }
     view { isValid } _ =
-      E.h1 {} (E.text "Email validator") </>
-      E.input {} `output` (\o -> { email: o.value }) </>
-        E.p {} (
-        E.text "Email is " </>
-        E.textB (validToString <$> isValid)
+      H.h1 {} (H.text "Email validator") </>
+      H.input {} `output` (\o -> { email: o.value }) </>
+        H.p {} (
+        H.text "Email is " </>
+        H.textB (validToString <$> isValid)
       )
 
 main :: Effect Unit

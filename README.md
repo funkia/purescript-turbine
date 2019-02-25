@@ -29,10 +29,10 @@ counterModel {increment, decrement} init = do
   pure { count }
 
 counterView {count} =
-  E.text "Counter " </>
-  E.span (E.textB $ map show count) </>
-  E.button "+" `output` (\o -> { increment: o.click }) </>
-  E.button "-" `output` (\o -> { decrement: o.click })
+  H.text "Counter " </>
+  H.span (H.textB $ map show count) </>
+  H.button "+" `output` (\o -> { increment: o.click }) </>
+  H.button "-" `output` (\o -> { decrement: o.click })
 
 counter = modelView counterModel counterView
 
@@ -53,12 +53,12 @@ counterModel {increment, decrement, delete} id = do
   pure { count, delete: delete $> id }
 
 counterView {count} =
-  E.div (
-    E.text "Counter" </>
-    E.span {} (E.textB $ map show count) </>
-    E.button {} "+" `output` (\o -> {increment: o.click}) </>
-    E.button {} "-" `output` (\o -> {decrement: o.click}) </>
-    E.button {} "x" `output` (\o -> {delete: o.click})
+  H.div (
+    H.text "Counter" </>
+    H.span {} (H.textB $ map show count) </>
+    H.button {} "+" `output` (\o -> {increment: o.click}) </>
+    H.button {} "-" `output` (\o -> {decrement: o.click}) </>
+    H.button {} "x" `output` (\o -> {delete: o.click})
   )
 
 counter = modelView counterModel counterView
@@ -76,10 +76,10 @@ counterListModel {addCounter, listOut} init = do
   pure {sum, counterIds}
 
 counterListView { sum, counterIds } _ =
-  E.div {} (
-    E.h1 {} (E.text "Counters") </>
-    E.span {} (E.textB (map (\n -> "Sum " <> show n) sum)) </>
-    E.button {} (E.text "Add counter") `output` (\o -> { addCounter: o.click }) </>
+  H.div {} (
+    H.h1 {} (H.text "Counters") </>
+    H.span {} (H.textB (map (\n -> "Sum " <> show n) sum)) </>
+    H.button {} (H.text "Add counter") `output` (\o -> { addCounter: o.click }) </>
     list (\id -> counter id `output` identity) counterIds identity `output` (\o -> { listOut: o })
   )
 
@@ -146,7 +146,7 @@ HTML elements. These live in the module `Turbine.HTML.Elements` which is
 typically import qualified like this.
 
 ```purescript
-import Turbine.HTML.Elements as E
+import Turbine.HTML as H
 ```
 
 For each HTML element the module exports a corresponding function.  For the
@@ -157,9 +157,9 @@ function takes a second argument as well which is a component. Here are a few
 examples.
 
 ```purescript
-myInput = E.input { placeholder: "Write here", class: "form-input" }
-myButton = E.button {} (E.text "Click me")
-myDivWithButton = E.div { class: "div-class" } myButton
+myInput = H.input { placeholder: "Write here", class: "form-input" }
+myButton = H.button {} (H.text "Click me")
+myDivWithButton = H.div { class: "div-class" } myButton
 ```
 
 The `text` function used above takes a string an returns a component
@@ -174,17 +174,17 @@ example.
 
 ```purescript
 const myLoginForm =
-  E.input { placeholder: "Username" } </>
-  E.input { placeholder: "Password" } </>
-  E.label {} (E.text "Remember login") </>
-  E.input { type: "checkbox" }
+  H.input { placeholder: "Username" } </>
+  H.input { placeholder: "Password" } </>
+  H.label {} (H.text "Remember login") </>
+  H.input { type: "checkbox" }
 ```
 
 If you add the following to the code in `Main.purs` and change `Main` into the
 following.
 
 ```diff
--app = E.text "Hello, world!"
+-app = H.text "Hello, world!"
 +app = myLoginForm
 ```
 
@@ -203,11 +203,11 @@ create the HTML which we will use going forward.
 
 ```purescript
 counterView = 
-  E.div {} (
-    E.text "Counter " </>
-    E.span {} (E.text "0") </>
-    E.button {} (E.text "+") </>
-    E.button {} (E.text "-")
+  H.div {} (
+    H.text "Counter " </>
+    H.span {} (H.text "0") </>
+    H.button {} (H.text "+") </>
+    H.button {} (H.text "-")
   )
 ```
 
@@ -248,15 +248,15 @@ a record of a behavior of the type `Behavior Number`.
 
 ```purescript
 counterView { count } = 
-  E.div {} (
-    E.text "Counter " </>
-    E.span {} (E.textB (map show count)) </>
-    E.button {} (E.text "+") </>
-    E.button {} (E.text "-")
+  H.div {} (
+    H.text "Counter " </>
+    H.span {} (H.textB (map show count)) </>
+    H.button {} (H.text "+") </>
+    H.button {} (H.text "-")
   )
 ```
 
-We also changed `E.text "0"` into `E.textB (map show count)`. The `textB`
+We also changed `H.text "0"` into `H.textB (map show count)`. The `textB`
 function is similar to `text` except that instead of taking an argument of
 type `String` it takes an argument of type `Behavior String.` It then
 returns a component that describes _dynamic HTML_. At any point in time

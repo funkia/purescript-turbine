@@ -32,10 +32,10 @@ counterView :: CounterOut -> Int -> Component CounterViewOut _
 counterView { count } _ =
   E.div { class: E.staticClass "foo bar" } (
     E.text "Counter " </>
-    E.span_ (E.textB $ map show count) </>
-    E.button_ (E.text "+") `output` (\o -> { increment: o.click }) </>
-    E.button_ (E.text "-") `output` (\o -> { decrement: o.click }) </>
-    E.button_ (E.text "x") `output` (\o -> { delete: o.click })
+    E.span {} (E.textB $ map show count) </>
+    E.button {} (E.text "+") `output` (\o -> { increment: o.click }) </>
+    E.button {} (E.text "-") `output` (\o -> { decrement: o.click }) </>
+    E.button {} (E.text "x") `output` (\o -> { delete: o.click })
   )
 
 counter :: Int -> Component {} CounterOut
@@ -64,10 +64,10 @@ counterListModel { addCounter, listOut } init = do
 
 counterListView :: ListOut -> Array Int -> Component ListViewOut _
 counterListView { sum, counterIds } _ =
-  E.div_ (
-    E.h1_ (E.text "Counters") </>
-    E.span_ (E.textB (map (\n -> "Sum " <> show n) sum)) </>
-    E.button_ (E.text "Add counter") `output` (\o -> { addCounter: o.click }) </>
+  E.div {} (
+    E.h1 {} (E.text "Counters") </>
+    E.span {} (E.textB (map (\n -> "Sum " <> show n) sum)) </>
+    E.button {} (E.text "Add counter") `output` (\o -> { addCounter: o.click }) </>
     list (\id -> counter id `output` identity) counterIds identity `output` (\o -> { listOut: o })
   )
 

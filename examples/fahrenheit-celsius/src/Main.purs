@@ -35,13 +35,13 @@ appModel { fahrenChange, celsiusChange } _ =
 
 appView :: AppModelOut -> Unit -> Component _ _
 appView { celsius, fahren } _ =
-  E.div_ (
-    E.div_ (
-      E.label_ (E.text "Fahrenheit") </>
+  E.div {} (
+    E.div {} (
+      E.label {} (E.text "Fahrenheit") </>
       E.input { value: show <$> fahren } `output` (\o -> { fahrenChange: changes o.value })
     ) </>
-    E.div_ (
-      E.label_ (E.text "Celsius") </>
+    E.div {} (
+      E.label {} (E.text "Celsius") </>
       E.input { value: show <$> celsius } `output` (\o -> { celsiusChange: changes o.value })
     )
   )

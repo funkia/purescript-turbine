@@ -27,8 +27,8 @@ app = modelView model view unit
       pure { isValid: isValidEmail <$> email }
     view { isValid } _ =
       E.h1 {} (E.text "Email validator") </>
-      E.input_ `output` (\o -> { email: o.value }) </>
-      E.p_ (
+      E.input {} `output` (\o -> { email: o.value }) </>
+        E.p {} (
         E.text "Email is " </>
         E.textB (validToString <$> isValid)
       )

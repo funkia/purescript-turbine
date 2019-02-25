@@ -32,10 +32,10 @@ appModel { snapClick } _ = do
 
 appView :: AppModelOut -> Unit -> Component AppViewOut _
 appView { message, time } _ =
-  E.h1_ (E.text "Continuous") </>
-  E.p_ (E.textB $ formatTime <$> time) </>
-  E.button_ (E.text "Click to snap time") `output` (\o -> { snapClick: o.click }) </>
-  E.p_ (E.textB message)
+  E.h1 {} (E.text "Continuous") </>
+  E.p {} (E.textB $ formatTime <$> time) </>
+  E.button {} (E.text "Click to snap time") `output` (\o -> { snapClick: o.click }) </>
+  E.p {} (E.textB message)
 
 app = modelView appModel appView unit
 

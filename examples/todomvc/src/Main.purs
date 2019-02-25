@@ -67,7 +67,7 @@ todoItem = modelView model view
             ({ checked: input.isComplete
              , class: E.staticClass "toggle"
             }) `output` (\o -> { toggleTodo: o.checkedChange }) </>
-          E.label_ (E.textB input.name) `output` (\o -> { startEditing: o.dblclick }) </>
+          E.label {} (E.textB input.name) `output` (\o -> { startEditing: o.dblclick }) </>
           E.button { class: E.staticClass "destroy" } (E.text "") `output` (\o -> { deleteClicked: o.click })
         ) </>
         E.input ({ value: input.name, class: E.staticClass "edit" }) `output` (\o -> {
@@ -120,7 +120,7 @@ todoAppView :: TodoAppModelOut -> Unit -> Component TodoAppViewOut _
 todoAppView input _ =
   E.section { class: E.staticClass "todoapp" } (
     E.header { class: E.staticClass "header" } (
-      E.h1_ (E.text "todo") </>
+      E.h1 {} (E.text "todo") </>
       todoInput {} `output` (\o -> { addItem: o.addItem }) </>
       E.ul { class: E.staticClass "todo-list" } (
         list (\i -> todoItem i `output` identity) input.todos (_.id) `output` (\o -> { items: o })

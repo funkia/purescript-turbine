@@ -1,3 +1,9 @@
+-- | This module contains Turbines DSL for constructing HTML.
+-- |
+-- | This module is typically imported qualified as.
+-- | ```purescript
+-- | import Turbine.HTML.Elements as E
+-- | ```
 module Turbine.HTML.Elements
   ( Attributes'
   , Output'
@@ -22,6 +28,8 @@ module Turbine.HTML.Elements
   , InputOut
   , input
   , input_
+  , inputRange
+  , inputRange_
   , textarea
   , textarea_
   , checkbox
@@ -44,6 +52,8 @@ module Turbine.HTML.Elements
   , tr_
   , td
   , td_
+  , progress
+  , progress_
   , empty
   , class Subrow
   , class RecordOf
@@ -70,8 +80,8 @@ import Turbine (Component)
 import Type.Data.RowList (RLProxy(..))
 import Type.Row (type (+))
 import Web.UIEvent.FocusEvent (FocusEvent)
-import Web.UIEvent.KeyboardEvent (KeyboardEvent)
 import Web.UIEvent.InputEvent (InputEvent)
+import Web.UIEvent.KeyboardEvent (KeyboardEvent)
 
 class Subrow (r :: # Type) (s :: # Type)
 
@@ -294,6 +304,31 @@ input_ = input {}
 
 foreign import _input :: forall a. Subrow a InputAttrs => Fn1 (Record a) (Component {} InputOut)
 
+type InputRangeAttrs' r =
+  ( min :: Behavior Number
+  , max :: Behavior Number
+  | InputAttrs' + r
+  )
+
+type InputRangeOut' r =
+  ( value :: Behavior Number
+  | InputOut' + r
+  )
+
+type InputRangeOut = Record (InputRangeOut' ())
+
+-- | An input element with the `type` attribute set to `range`. Compared to a
+-- | normal a normal input element this variant accepts three additional
+-- | attributes all of which are numbers: `max`, `min`, and `step`. Additionally
+-- | the `value` output is a `Number` and not a `String`.
+inputRange :: forall a. Subrow a (InputRangeAttrs' ()) => Record a -> Component {} { | (InputRangeOut' ()) }
+inputRange = runFn1 _inputRange
+
+inputRange_ :: Component {} { | (InputRangeOut' ()) }
+inputRange_ = inputRange {}
+
+foreign import _inputRange :: forall a. Subrow a (InputRangeAttrs' ()) => Fn1 (Record a) (Component {} ({ | InputRangeOut' ()}))
+
 type TextareaAttrs' r =
   ( rows :: Behavior Int
   , cols :: Behavior Int
@@ -333,11 +368,16 @@ checkbox_ = checkbox {}
 
 foreign import _checkbox :: forall a. Subrow a CheckboxAttrs => Fn1 (Record a) (Component {} CheckboxOutput)
 
+-- | Creates a static text node based on the given string.
+-- |
+-- | For a dynamic version see [`textB`](#textB).
 text :: String -> Component {} Unit
 text = _text
 
 foreign import _text :: String -> Component {} Unit
 
+-- | Creates a dynamic text node based on the given string valued behavior. The
+-- | value of the text node is always equal to the value of the behavior.
 textB :: Behavior String -> Component {} Unit
 textB = _textB
 
@@ -375,6 +415,24 @@ td_ = td {}
 
 foreign import _td :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
+type ProgressAttrs' r =
+  ( value :: Behavior Number
+  , max :: Behavior Number
+  | Attributes' + r
+  )
+
+type ProgressAttrs = ProgressAttrs' ()
+
+progress :: forall a o p. Subrow a ProgressAttrs => Record a -> Component o p -> Component o Output
+progress = runFn2 _progress
+
+progress_ :: forall o p. Component o p -> Component o Output
+progress_ = progress {}
+
+foreign import _progress :: forall a o p. Subrow a ProgressAttrs => Fn2 (Record a) (Component o p) (Component o Output)
+
+-- | A `br` element. Note that this is a constant and not a function since a
+-- | `br` elements takes neither attributes nor children.
 foreign import br :: Component {} Unit
 
 -- | An empty component corresponding to no HTML nor effects.

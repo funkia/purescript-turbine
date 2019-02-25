@@ -38,6 +38,13 @@ exports._input = function() {
   return T.elements.input;
 };
 
+exports._inputRange = function () {
+  return function(attrs) {
+    var attrs2 = Object.assign({ type: "range" }, attrs)
+    return T.elements.input(attrs2);
+}  ;
+};
+
 exports._textarea = function() {
     return T.elements.textarea;
 };
@@ -90,6 +97,9 @@ exports._td = function() {
     return T.elements.td;
 };
 
+exports._progress = function() {
+    return T.elements.progress;
+};
 
 exports._text = T.text;
 

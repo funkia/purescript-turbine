@@ -18,6 +18,10 @@ exports._bind = function(c, f) {
   return c.chain(f);
 };
 
+exports.liftEffectComponent = function() {
+  T.performComponent;
+}
+
 exports._merge = function() {
   return T.merge;
 };

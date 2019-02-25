@@ -21,6 +21,7 @@ import Control.Apply (lift2)
 import Data.Function.Uncurried (Fn2, runFn2, mkFn2, Fn3, runFn3)
 import Data.Symbol (class IsSymbol, SProxy(..))
 import Effect (Effect)
+import Effect.Class (class MonadEffect)
 import Effect.Uncurried (EffectFn2, runEffectFn2)
 import Hareactive.Types (Behavior, Now)
 import Prim.Row (class Union)
@@ -65,6 +66,13 @@ instance bindComponent :: Bind (Component o) where
 foreign import _bind :: forall o a b. Fn2 (Component o a) (a -> Component o b) (Component o b)
 
 instance monadComponent :: (RL.RowToList row RL.Nil) => Monad (Component { | row })
+
+-- | Runs an `Effect` inside a `Component`. The side-effect will be executed
+-- | when the `Component` is being run.
+instance monadEffectComponent :: (RL.RowToList row RL.Nil) => MonadEffect (Component { | row }) where
+  liftEffect = liftEffectComponent
+
+foreign import liftEffectComponent :: forall a row. RL.RowToList row RL.Nil => Effect a -> Component { | row } a
 
 modelView :: forall o p a x. (o -> x -> Now p) -> (p -> x -> Component o a) -> (x -> Component {} p)
 modelView m v = runFn2 _modelView (mkFn2 m) (mkFn2 v)

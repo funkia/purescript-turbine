@@ -302,7 +302,7 @@ foreign import _checkbox :: forall a. Subrow a CheckboxAttrs => Fn1 (Record a) (
 
 -- | Creates a static text node based on the given string.
 -- |
--- | For a dynamic version see [`textB`](#textB).
+-- | For a dynamic version see [`textB`](#v:textB).
 text :: String -> Component {} Unit
 text = _text
 

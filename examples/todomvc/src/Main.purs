@@ -107,10 +107,10 @@ type TodoAppViewOut = { addItem :: Stream String, items :: Behavior (Array TodoI
 
 todoAppModel :: TodoAppViewOut -> Unit -> Now TodoAppModelOut
 todoAppModel input _ = do
-  nextId <- H.scan (+) 0 (input.addItem $> 1)
-  let itemToDelete = H.switchStream $ map (fold <<< map _.delete) input.items
+  nextId <- H.accum (+) 0 (input.addItem $> 1)
+  let itemToDelete = H.shiftCurrent $ map (fold <<< map _.delete) input.items
   let newTodo = H.snapshotWith (\name id -> { name, id }) nextId input.addItem
-  todos <- H.scan ($) [] (
+  todos <- H.accum ($) [] (
     (flip snoc <$> newTodo) <>
     ((\id -> filter ((_ /= id) <<< (_.id))) <$> itemToDelete)
   )

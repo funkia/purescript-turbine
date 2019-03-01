@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/funkia/purescript-turbine#readme",
   "devDependencies": {
-    "@funkia/hareactive": "^0.2.7",
+    "@funkia/hareactive": "^0.3.1",
     "@funkia/turbine": "^0.2.3"
   }
 }

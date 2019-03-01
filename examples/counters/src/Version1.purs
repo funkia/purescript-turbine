@@ -8,7 +8,7 @@ import Control.Apply (lift2)
 import Data.Array (cons, filter)
 import Data.Foldable (fold, foldr)
 import Hareactive.Types (Behavior, Stream, Now)
-import Hareactive.Combinators (scan, switchStream)
+import Hareactive.Combinators (accum)
 import Data.Monoid ((<>))
 import Turbine (Component, runComponent, output, modelView, (</>), list)
 import Turbine.HTML as H
@@ -19,7 +19,7 @@ type CounterViewOut = {increment :: Stream Unit, decrement :: Stream Unit}
 counterModel :: CounterViewOut -> Int -> Now CounterOut
 counterModel { increment, decrement } id = do
   let changes = (increment $> 1) <> (decrement $> -1)
-  count <- scan (+) 0 changes
+  count <- accum (+) 0 changes
   pure { count }
 
 counterView :: CounterOut -> Int -> Component CounterViewOut _

@@ -51,6 +51,7 @@ import Prelude hiding (div)
 
 import Data.Function.Uncurried (Fn2, Fn1, runFn1, runFn2)
 import Data.Symbol (class IsSymbol, SProxy(..))
+import Data.Unit (Unit)
 import Hareactive.Types (Behavior, Stream)
 import Prim.Row (class Union)
 import Prim.Row as Row
@@ -62,6 +63,7 @@ import Type.Row (type (+))
 import Web.UIEvent.FocusEvent (FocusEvent)
 import Web.UIEvent.InputEvent (InputEvent)
 import Web.UIEvent.KeyboardEvent (KeyboardEvent)
+import Web.UIEvent.MouseEvent (MouseEvent)
 
 class Subrow (r :: # Type) (s :: # Type)
 
@@ -140,6 +142,7 @@ derive newtype instance semigroupClassDescription :: Semigroup ClassDescription
 
 -- Elements
 
+-- | This type describes the attributes that all HTML elements accepts.
 type Attributes' r =
   ( class :: ClassDescription
   , id :: Behavior String
@@ -148,9 +151,10 @@ type Attributes' r =
 
 type Attributes = Attributes' ()
 
+-- | This type describes the output that all HTML elements output.
 type Output' r =
-  ( click :: Stream Unit
-  , dblclick :: Stream Unit
+  ( click :: Stream MouseEvent
+  , dblclick :: Stream MouseEvent
   , keydown :: Stream KeyboardEvent
   , keyup :: Stream KeyboardEvent
   , blur :: Stream FocusEvent

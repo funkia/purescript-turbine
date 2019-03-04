@@ -3,12 +3,16 @@
 [![Turbine on Pursuit](https://pursuit.purescript.org/packages/purescript-turbine/badge)](https://pursuit.purescript.org/packages/purescript-turbine)
 [![Build status](https://travis-ci.org/funkia/purescript-turbine.svg?branch=master)](https://travis-ci.org/funkia/purescript-turbine)
 
-Turbine is a purely functional frontend framework powered by classic FRP.
+A purely functional library for building user interfaces powered by FRP.
 
+* Based on higher-order FRP with support for continuous time.
 * Concise and powerful thanks to FRP.
-* No big global state/model. Everything is incapsulated in components.
+* No big global state/model. Everything is encapsulated in components.
 * Type-safe communication between views and models.
-* Model logic and view code is kept seperate for logic-less views.
+* Model logic and view code is kept separate for logic-less views.
+* Highly modular and composable thanks to encapsulated stateful components.
+* Avoids using virtual DOM by utilizing FRP to make all changes to the DOM in reaction to changing behaviors.
+* Easy to reason about thanks to tractable reactive data flow.
 
 ## Table of contents
 
@@ -102,14 +106,23 @@ bower install --save purescript-turbine
 
 ## Tutorial
 
-This is a hands-on tutorial in which we build a simple application. The core
-concepts in Turbine are introduced along the way. Turbine is based on functional
-reactive programming (FRP). In particular it uses the FRP library
-Hareactive. This tutorial assumes no prior experience with FRP and hence it can
-also be seen as an introduction to FRP.
+This tutorial introduces and explains the core concepts in Turbine.  Along the
+way we build a few simple applications to exemplify the material.
 
-If you want to you can follow along the tutorial yourself. You can do so by
-cloning the Turbine starter template.
+Turbine is based on _functional reactive programming_ (FRP). It uses the FRP
+library [Hareactive](#https://github.com/funkia/purescript-hareactive). It is
+important to understand that Turbine is a relatively small layer on top of
+Hareactive that provides abstractions for building HTML in a way that is
+connected with FRP. Hareactive is a substantially larger library than Turbine.
+Both in terms of implementation but, more importantly for the tutorial, also in
+terms of the size of the API and of how much there is to learn. Hence, when
+learning Turbine the bulk of the learning is actually to learn FRP. This
+tutorial assumes no prior experience with FRP and hence it can also be seen as
+a tutorial to FRP in general and Hareactive in particular.
+
+If you want to you can follow along the tutorial yourself and potentially
+experiment with the code examples. You can do so by cloning the Turbine starter
+template with the following commands.
 
 ```
 git clone https://github.com/funkia/purescript-turbine-starter turbine-tutorial
@@ -117,18 +130,28 @@ cd turbine-tutorial
 npm i
 ```
 
-You can then run `npm run build` and aftewards you should see the text "Hello,
-world!" if you open the `index.html` file in a browser. Along the way you should
-make changes to the file `src/Main.purs`.
+After having executed the above you can run `npm run build` and afterwards you
+should see the text "Hello, world!" if you open the `index.html` file in a
+browser. Along the way you should make changes to the file `src/Main.purs`,
+rebuild the app with `npm run build`, and then observe the changes in a
+browser.
 
 ### Component
 
-The central type in Turbine is `Component`. A `Component` represents
-a piece of user interface. For instance, that could be an input field or
-a button. More concretely a `Component` is a description on how to create
-a piece of HTML. Components are composable. Hence an input field and
-a button can be composed together and the result is another component.
-A Turbine application is "components all the way down".
+The central type in Turbine is `Component`. As a first approximation a
+`Component` represents a piece of user interface. For instance, that could be
+an input field or a button. More concretely a `Component` contains a
+description on how to create a piece of HTML. Components are composable. Hence
+an input field and a button can be composed together and the result is another
+component. A component also describes any state, logic, and side-effects
+associated with the component. As an example two input fields and a button can
+be composed to describe the UI of a login form. The logic for the login form
+and the side-effects for performing the HTTP requests for the login can be
+"attached" to the view.
+
+A Turbine application is constructed by composing components. Components
+divides the app into separate chunks that can be implemented in isolation. A
+Turbine application is "components all the way down".
 
 The `Component` type has the following kind.
 
@@ -136,25 +159,27 @@ The `Component` type has the following kind.
 Component :: Type -> Type -> Type
 ```
 
-That is, it is parameterized by two types. The purpose of those are explained
-later.
+That is, it is parameterized by two types. The purpose of these are explained
+later in the tutorial.
 
-### Creating simple HTML
+### Creating static HTML
 
-Turbine contains functions for creating components that correspond to single
-HTML elements. These live in the module `Turbine.HTML.Elements` which is
-typically import qualified like this.
+In this section we will explain how to create static HTML with Turbine. Turbine
+contains functions for creating components that correspond to single HTML
+elements. These live in the module `Turbine.HTML` which is typically import
+qualified like this.
 
 ```purescript
 import Turbine.HTML as H
 ```
 
-For each HTML element the module exports a corresponding function.  For the
-HTML element `div` there is a function `div`, for the `span` element there is a
-`span` function, and so on. The first argument to these functions is a record
-of attributes. If the HTML element supports children then the corresponding
-function takes a second argument as well which is a component. Here are a few
-examples.
+For every HTML element the `Turbine.HTML` module exports a corresponding
+function. Fro the HTML element `div` there is a function `div`, for the `span`
+element there is a `span` function, and so on. The first argument to these
+functions is a record of attributes. Furthermore, if the HTML element supports
+children then the corresponding function takes a second argument as well. This
+argument must be a component and describes the child for the element. Here are
+a few examples.
 
 ```purescript
 myInput = H.input { placeholder: "Write here", class: "form-input" }
@@ -162,15 +187,16 @@ myButton = H.button {} (H.text "Click me")
 myDivWithButton = H.div { class: "div-class" } myButton
 ```
 
-The `text` function used above takes a string an returns a component
-corressponding to a text node of the string.
+The `text` function used above takes a string and returns a component
+corresponding to a text node of the given string.
 
 Components are composed together with the `</>` operator. As a first
-approximation `</>` is similar to the semigroup operator `<>`. However, the
-type of `</>` is slightly different as we will see later. Writing `component1
-</> component2` creates a new component which represents the HTML from the
-first component followed by the HTML for the second component. Here is an
-example.
+approximation `</>` is similar to the semigroup operator `<>`. But, while `<>`
+has a type of the form `a -> a -> a` the type of `</>` is slightly more complex
+since components keep track of more information at the type level than a
+typical semigroup. Writing `component1 </> component2` creates a new component
+which represents the HTML from the first component followed by the HTML for the
+second component. As an example the code
 
 ```purescript
 const myLoginForm =
@@ -180,26 +206,31 @@ const myLoginForm =
   H.input { type: "checkbox" }
 ```
 
-If you add the following to the code in `Main.purs` and change `Main` into the
-following.
+Corresponds to the following HTML.
+
+```html
+<input placeholder="Username" />
+input placeholder="Password" />
+<label>Remember login</label>
+<input type="checkbox" />
+```
+
+If you add the code above to `Main.purs` and change the definition of `Main`
+into the following.
 
 ```diff
 -app = H.text "Hello, world!"
 +app = myLoginForm
 ```
 
-Then you should see HTML corresponding to the following.
+Then you should see HTML corresponding to the HTML above.
 
-```html
-<input placeholder="Username" />
-<input placeholder="Password" />
-<label>Remember login</label>
-<input type="checkbox" />
-```
 
-By combining `</>` with the fact that the element function accept a child
-component as their second argument we can create arbitrary HTML. Now, let us
-create the HTML which we will use going forward.
+By combining `</>` with the fact that the element functions accept a child
+component as their second argument we can create arbitrary HTML of any
+complexity. In this tutorial we will build a simple counter application
+(similar to the one [shown above](#single-counter)). To this end let us create
+the HTML which we will use going forward.
 
 ```purescript
 counterView = 
@@ -211,42 +242,62 @@ counterView =
   )
 ```
 
-Here we have hardcoded the value `0` into the user interface. The intended
+Here we have hard coded the value `0` into the user interface. The intended
 outcome is that the displayed number is dynamic and increments every time the
 `+` button is pressed and decrements every time the `-` button is pressed. But,
-before we can implement that we need to learn a little bit of FRP.
+in order to achieve that we need to learn a little bit of FRP.
 
 ### A short interlude on FRP
 
-Functional reactive programming contains two key data-types `Behavior` and
-`Stream`.
+At its essence functional reactive programming can be seen as providing
+abstractions for representing phenomenon that _depends on time_ in a purely
+function way. FRP contains two key data-types `Behavior` and `Stream`:
+
+* A `Behavior` represents a value that changes over time.
+* A `Stream` represents events or occurrences that happens at specific moments
+  in time.
+
+For instance, `Behavior Number` represents a changing number and `Behavior
+String` represents a changing string. On the other hand, a `Stream Number`
+represents numbers associated with moments in time and `Stream String`
+represents strings associated with points in time.
 
 > Note: What we call `Stream` is often called `Event` in other FRP libraries.
-
-A `Behavior` represents a value that changes over time. For instance, `Behavior
-Number` represents a changing number and `Behavior String` represents a
-changing string.
-
-A `Stream` represents events or occurrences that happens at specific moments in
-time.
 
 The difference between behaviors and streams can be illustrated as below.
 
 ![illustration of behavior and stream](resources/behaviorstream.svg)
 
-As the image indicates a behavior can be seen a function from time. That
-is, at any specific moment in time it has a value. A stream on the other
-hand only has values, or occurrences, at specific punctuations in time.
+As the image indicates a behavior can be seen a function from time. That is, at
+any specific moment in time it has a value. A stream on the other hand only has
+values, or occurrences, at specific punctuations in time.
+
+Initially the distinction between a behavior and a stream may be unclear.
+Fortunately, when one becomes familiar with the two abstractions the choice of
+which one to use becomes unambiguous. A simple heuristic to determine whether a
+particular thing should be represented as a behavior or as a stream is to ask
+the question "does this thing has a notion of a current value". If yes, then it
+is a behavior, if no, then it is a stream. Turbine uses behaviors and streams
+to represent any dynamic UI value using FRP. Here are a few examples.
+
+* The value of an input field is represented as a `Behavior String`. Because
+  the input field always has a "current value" its value is represented as a
+  behavior.
+* The clicking of a button is represented as a `Stream ClickEvent`. A click of
+  the button is an event that happens at specific discrete moment in time,
+  hence a stream is used.
+* Whether or not a checkbox is checked is represented as a `Behavior Boolean`.
 
 ### Dynamic HTML
 
-In the counter component above we hard-coded the value `0` into the view.
-The goal is that the displayed number should _change over time_. And, as
-mentioned, in FRP we use behaviors to represent values that change over
-time. Thus, we parametize the HTML above such that it takes as agument
-a record of a behavior of the type `Behavior Number`.
+In the counter component above we hard coded the value `0` into the view. The
+goal is that the displayed number should _change over time_. And, as mentioned,
+in FRP we use behaviors to represent values that changes over time. Thus, we
+parameterize the HTML above such that it takes as argument a record of a
+behavior of the type `Behavior Number`.
 
 ```purescript
+counterView { count :: Behavior String } -> Component _ _
 counterView { count } = 
   H.div {} (
     H.text "Counter " </>
@@ -257,16 +308,61 @@ counterView { count } =
 ```
 
 We also changed `H.text "0"` into `H.textB (map show count)`. The `textB`
-function is similar to `text` except that instead of taking an argument of
-type `String` it takes an argument of type `Behavior String.` It then
-returns a component that describes _dynamic HTML_. At any point in time
-the value of the text node will have the same value as the behavior.
+function is similar to `text` except that instead of taking an argument of type
+`String` it takes an argument of type `Behavior String.` It then returns a
+component that describes _dynamic HTML_. The value of the text node will be
+kept up to date with the value of the behavior.
+
+We have now modified the view such that it takes as _input_ a dynamic count
+which it displays in the UI. Next we much declare the views _output_ such that
+the clicks of the two buttons.
 
 ### Output
 
-Recall that the `Component` type is parameterized by two types. The first
-of these is called the components _selected output_ and the second is
-called the _available output_.
+Recall that the `Component` type is parameterized by two types. The first of
+these is called the components _selected output_ and the second is called the
+_available output_. If you are familiar with `addEventListener` in the DOM API
+then, as an analogy, the available output can be thought of the events that we
+_could_ listen to by calling `addEventListener` with the event name. The
+selected output, on the other hand, is the output that we have explicitly
+declared that we are interested in.
+
+When a component is initially created, by convention, its selected output is
+`{}`. This matches the intuition that a newly constructed component has not had
+any of it available output selected yet. The available output on the other hand
+will be a record of all the various streams and behaviors that the component
+produces.
+
+As an example consider this slightly simplified type of the `button` function.
+
+```purescript
+button :: { | a } -> Component {} { click :: Stream ClickEvent
+                                    -- ... and so on
+                                  }
+```
+
+This type tells us that when given a record of attributes the `button` function
+returns a component with available output as declared by the last object. It
+includes, among other things, a field of type `click :: Stream ClickEvent`.
+This stream has an occurrence whenever the button is pressed.
+
+
+
+As an example consider the type of the `input` function.
+
+```purescript
+input :: { | a } -> Component {} { value :: Behavior String
+                                 , blur :: Stream FocusEvent
+                                 , keydown :: Stream KeyboardEvent
+                                 , keyup :: Stream KeyboardEvent
+                                 -- ... and so on
+                                 }
+```
+
+This type tells us that when given a record of attributes the `input` function
+returns a component with available output as declared by the last object. It
+includes, among other things, a field of type `value :: Behavior String`. This
+behavior describes the current value of the input field.
 
 ### Model view
 

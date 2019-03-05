@@ -203,7 +203,7 @@ const myLoginForm =
   H.input { placeholder: "Username" } </>
   H.input { placeholder: "Password" } </>
   H.label {} (H.text "Remember login") </>
-  H.input { type: "checkbox" }
+  H.checkbox {}
 ```
 
 Corresponds to the following HTML.
@@ -319,24 +319,26 @@ the clicks of the two buttons.
 
 ### Output
 
-Recall that the `Component` type is parameterized by two types. The first of
-these is called the components _selected output_ and the second is called the
-_available output_. If you are familiar with `addEventListener` in the DOM API
-then, as an analogy, the available output can be thought of the events that we
-_could_ listen to by calling `addEventListener` with the event name. The
-selected output, on the other hand, is the output that we have explicitly
-declared that we are interested in.
+Recall that the `Component` type is parameterized by two types. Both of these
+are, by convention, almost always records. The first of them is called the
+components _selected output_ and the second is called the components _available
+output_. If you are familiar with `addEventListener` in the DOM API then, as an
+analogy, the available output can be thought of the events that we _could_
+listen to by calling `addEventListener` with the event name. The selected
+output, on the other hand, is the output that we have explicitly declared that
+we are interested in.
 
-When a component is initially created, by convention, its selected output is
-`{}`. This matches the intuition that a newly constructed component has not had
-any of it available output selected yet. The available output on the other hand
-will be a record of all the various streams and behaviors that the component
-produces.
+When a component is initially created its selected output is usually `{}`. This
+matches the intuition that a newly constructed component has not had any of it
+available output selected yet. The available output on the other hand will be a
+record of all the various streams, behaviors, and other things that the
+component produces.
 
 As an example consider this slightly simplified type of the `button` function.
 
 ```purescript
 button :: { | a } -> Component {} { click :: Stream ClickEvent
+                                    dbclick :: Stream ClickEvent
                                     -- ... and so on
                                   }
 ```
@@ -346,9 +348,7 @@ returns a component with available output as declared by the last object. It
 includes, among other things, a field of type `click :: Stream ClickEvent`.
 This stream has an occurrence whenever the button is pressed.
 
-
-
-As an example consider the type of the `input` function.
+As another example consider the type of the `input` function.
 
 ```purescript
 input :: { | a } -> Component {} { value :: Behavior String
@@ -359,11 +359,88 @@ input :: { | a } -> Component {} { value :: Behavior String
                                  }
 ```
 
-This type tells us that when given a record of attributes the `input` function
-returns a component with available output as declared by the last object. It
-includes, among other things, a field of type `value :: Behavior String`. This
-behavior describes the current value of the input field.
+From this we see that a component constructed by the `input` function has among
+its available output a field of type `value :: Behavior String`. This behavior
+describes the current value of the input field.
+
+Available output can be selected by using the
+[`output`](https://pursuit.purescript.org/packages/purescript-turbine/0.0.4/docs/Turbine#v:output)
+function. Its type is as follows.
+
+```purescript
+output :: forall a o p q. Union o p q => Component { | o } a -> (a -> { | p }) -> Component { | q } a
+```
+
+Let us unpack the type piece for piece. The `output` function takes as
+arguments a component and a function. The type variable `a` is the components
+available output. The function takes the available output, the `a`, and returns
+a record of `p`. The given components selected output is the type variable `o`.
+Per the constraint `Union o p q` the type variable `q` becomes the union of `o`
+and `p`. The returned component has the type `Component { | q } a`. In other
+words the given function receives the components available output, returns a
+record and this record is then merged into the returned components selected
+output. The end result is that `output` moves output from the available part
+into the selected part.
+
+The `output` function is often used infix as in the following example.
+
+```purescript
+usernameField = H.input {} `output` (\o -> { username: o.value })
+```
+
+In the above code we are selecting the `value` behavior that the component
+created by `input` outputs. By returning a record with a field named `username`
+we are in a sense moving the behavior from the available output into the
+selected output and renaming it at the same time. As defined above
+`usernameField` has the type `Component { username :: Behavior String } { ...
+}`.
+
+As the piece in the puzzle to understand how output works we must now
+consider the type of the `</>` operator which is an alias for the
+[output](https://pursuit.purescript.org/packages/purescript-turbine/0.0.4/docs/Turbine#v:merge)
+function.
+
+```purescript
+merge :: forall a o b p q. Union o p q => Component { | o } a -> Component { | p } b -> Component { | q } { | q }
+```
+
+Due to the `Union o p q` constraint `merge` takes two components and returns a
+new component that is their combination. This combination has as its selected
+output the union of the two components selected output.
+
+Let us return to the example with the login form from earlier and consider how
+we might get output from the view and how the types interact.
+
+```purescript
+const myLoginForm =
+  H.input { placeholder: "Username" } `output` (\o -> { username: o.value }) </>
+  H.input { placeholder: "Password" } `output` (\o -> { password: o.value }) </>
+  H.label {} (H.text "Remember login") </>
+  H.checkbox {} `output` (\o -> { rememberLogin: o.checked })
+```
+
+Each invocation of `output` selects some output and each invocation of `</>`
+merges these in the combined components. The end result is that `myLoginForm`
+has the type.
+
+```purescript
+myLoginForm :: Component { username :: Behavior String
+                         , password :: Behavior String
+                         , rememberLogin :: Stream Boolean
+                         }
+                         { ... }
+```
 
 ### Model view
 
-### List
+The
+[`modelView`](https://pursuit.purescript.org/packages/purescript-turbine/0.0.4/docs/Turbine#v:modelView)
+function is a key part of Turbine. It is the primary way to create custom
+components with custom logic. It takes a _model_ and a _view_. The model is a
+function that returns a computation in the
+[Now](https://pursuit.purescript.org/packages/purescript-hareactive/0.0.9/docs/Hareactive.Types#t:Now)
+monad. The view is a function that returns a component.
+
+```purescript
+modelView :: forall o p a x. (o -> x -> Now p) -> (p -> x -> Component o a) -> (x -> Component { } p)
+```

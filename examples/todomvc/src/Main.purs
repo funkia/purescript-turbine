@@ -48,7 +48,7 @@ todoItem = modelView model view
       isComplete <- H.stepper false input.toggleTodo
       let cancelEditing = H.filter (isKey "Escape") input.nameKeyup
       let finishEditing = H.filter (isKey "Enter") input.nameKeyup
-      -- Editing should stop if either on enter or on escape
+      -- Editing should stop either on enter or on escape
       let stopEditing = cancelEditing <> finishEditing
       -- The name when editing started
       initialName <- H.stepper "" (H.snapshot input.name input.startEditing)

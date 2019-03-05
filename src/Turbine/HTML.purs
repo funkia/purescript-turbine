@@ -21,9 +21,9 @@ module Turbine.HTML
   , InputOut'
   , InputOut
   , input
+  , checkbox
   , inputRange
   , textarea
-  , checkbox
   , button
   , label
   , section
@@ -193,6 +193,31 @@ h1 = runFn2 _h1
 
 foreign import _h1 :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
+h2 :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
+h2 = runFn2 _h2
+
+foreign import _h2 :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
+
+h3 :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
+h3 = runFn2 _h3
+
+foreign import _h3 :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
+
+h4 :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
+h4 = runFn2 _h4
+
+foreign import _h4 :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
+
+h5 :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
+h5 = runFn2 _h5
+
+foreign import _h5 :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
+
+h6 :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
+h6 = runFn2 _h6
+
+foreign import _h6 :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
+
 label :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
 label = runFn2 _label
 
@@ -271,19 +296,6 @@ inputRange = runFn1 _inputRange
 
 foreign import _inputRange :: forall a. Subrow a (InputRangeAttrs' ()) => Fn1 (Record a) (Component {} ({ | InputRangeOut' ()}))
 
-type TextareaAttrs' r =
-  ( rows :: Behavior Int
-  , cols :: Behavior Int
-  | InputAttrs' + r
-  )
-
-type TextareaAttrs = TextareaAttrs' ()
-
-textarea :: forall a. Subrow a TextareaAttrs => Record a -> Component {} InputOut
-textarea = runFn1 _textarea
-
-foreign import _textarea :: forall a. Subrow a TextareaAttrs => Fn1 (Record a) (Component {} InputOut)
-
 type CheckboxAttrs' r =
   ( checked :: Behavior Boolean
   | Attributes' + r
@@ -299,10 +311,43 @@ type CheckboxOut' r =
 
 type CheckboxOutput = Record (CheckboxOut' ())
 
+-- | An input element with the `type` attribute set to `checkbox`.
+-- |
+-- | Most notably a `checkbox` outputs a behavior named `checked` denoting
+-- | whether or not the checkbox is currently checked.
 checkbox :: forall a. Subrow a CheckboxAttrs => Record a -> Component {} CheckboxOutput
 checkbox = runFn1 _checkbox
 
 foreign import _checkbox :: forall a. Subrow a CheckboxAttrs => Fn1 (Record a) (Component {} CheckboxOutput)
+
+type TextareaAttrs' r =
+  ( rows :: Behavior Int
+  , cols :: Behavior Int
+  | InputAttrs' + r
+  )
+
+type TextareaAttrs = TextareaAttrs' ()
+
+-- | A textarea element. Accepts `rows` and `cols` attributes.
+textarea :: forall a. Subrow a TextareaAttrs => Record a -> Component {} InputOut
+textarea = runFn1 _textarea
+
+foreign import _textarea :: forall a. Subrow a TextareaAttrs => Fn1 (Record a) (Component {} InputOut)
+
+type ProgressAttrs' r =
+  ( value :: Behavior Number
+  , max :: Behavior Number
+  | Attributes' + r
+  )
+
+type ProgressAttrs = ProgressAttrs' ()
+
+-- | A progress element. At accepts `value` and `max` both of which must be
+-- | `Number` valued.
+progress :: forall a o p. Subrow a ProgressAttrs => Record a -> Component o p -> Component o Output
+progress = runFn2 _progress
+
+foreign import _progress :: forall a o p. Subrow a ProgressAttrs => Fn2 (Record a) (Component o p) (Component o Output)
 
 -- | Creates a static text node based on the given string.
 -- |
@@ -338,19 +383,6 @@ td :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Componen
 td = runFn2 _td
 
 foreign import _td :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
-
-type ProgressAttrs' r =
-  ( value :: Behavior Number
-  , max :: Behavior Number
-  | Attributes' + r
-  )
-
-type ProgressAttrs = ProgressAttrs' ()
-
-progress :: forall a o p. Subrow a ProgressAttrs => Record a -> Component o p -> Component o Output
-progress = runFn2 _progress
-
-foreign import _progress :: forall a o p. Subrow a ProgressAttrs => Fn2 (Record a) (Component o p) (Component o Output)
 
 -- | A `br` element. Note that this is a constant and not a function since a
 -- | `br` elements takes neither attributes nor children.

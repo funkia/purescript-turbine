@@ -18,6 +18,26 @@ exports._h1 = function() {
     return T.elements.h1;
 };
 
+exports._h2 = function() {
+    return T.elements.h2;
+};
+
+exports._h3 = function() {
+    return T.elements.h3;
+};
+
+exports._h4 = function() {
+    return T.elements.h4;
+};
+
+exports._h5 = function() {
+    return T.elements.h5;
+};
+
+exports._h6 = function() {
+    return T.elements.h6;
+};
+
 exports._ul = function() {
     return T.elements.ul;
 };

@@ -51,7 +51,6 @@ import Prelude hiding (div)
 
 import Data.Function.Uncurried (Fn2, Fn1, runFn1, runFn2)
 import Data.Symbol (class IsSymbol, SProxy(..))
-import Data.Unit (Unit)
 import Hareactive.Types (Behavior, Stream)
 import Prim.Row (class Union)
 import Prim.Row as Row

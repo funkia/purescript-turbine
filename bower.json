@@ -12,16 +12,17 @@
     "output"
   ],
   "dependencies": {
-    "purescript-prelude": "^4.1.0",
-    "purescript-console": "^4.1.0",
+    "purescript-prelude": "^4.1.1",
+    "purescript-console": "^4.2.0",
     "purescript-functions": "^4.0.0",
-    "purescript-record": "^1.0.0",
-    "purescript-effect": "^2.0.0",
-    "purescript-arrays": "^5.0.0",
-    "purescript-hareactive": "0.0.9",
-    "purescript-web-html": "^1.0.0",
-    "purescript-web-events": "^1.0.0",
-    "purescript-web-uievents": "^1.0.0"
+    "purescript-record": "^2.0.1",
+    "purescript-effect": "^2.0.1",
+    "purescript-arrays": "^5.3.0",
+    "purescript-hareactive": "0.1.2",
+    "purescript-web-html": "^2.2.1",
+    "purescript-web-events": "^2.0.1",
+    "purescript-web-uievents": "^2.0.0",
+    "purescript-typelevel-prelude": "^5.0.0"
   },
   "devDependencies": {
     "purescript-psci-support": "^4.0.0"

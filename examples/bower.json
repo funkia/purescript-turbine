@@ -7,14 +7,13 @@
     "output"
   ],
   "dependencies": {
-    "purescript-prelude": "^4.1.0",
-    "purescript-console": "^4.1.0",
+    "purescript-prelude": "^4.1.1",
+    "purescript-console": "^4.2.0",
     "purescript-functions": "^4.0.0",
-    "purescript-record": "^1.0.0",
-    "purescript-strings": "^4.0.0",
-    "purescript-hareactive": "^0.0.8",
-    "purescript-numbers": "^6.0.0",
-    "purescript-turbine": "../"
+    "purescript-record": "^2.0.1",
+    "purescript-strings": "^4.0.1",
+    "purescript-hareactive": "^0.1.2",
+    "purescript-numbers": "^7.0.0"
   },
   "devDependencies": {
     "purescript-psci-support": "^4.0.0"

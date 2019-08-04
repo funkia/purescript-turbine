@@ -9,7 +9,7 @@ import Data.Array (cons, filter)
 import Data.Foldable (fold, foldr)
 import Hareactive.Combinators (accum, scan, shiftCurrent)
 import Hareactive.Types (Behavior, Stream, Now)
-import Turbine (Component, list, modelView, output, static, (</>))
+import Turbine (Component, list, modelView, output, (</>))
 import Turbine.HTML as H
 
 type CounterOut =
@@ -30,7 +30,7 @@ counterModel { increment, decrement, delete } id = do
 
 counterView :: CounterOut -> Int -> Component CounterViewOut _
 counterView { count } _ =
-  H.div { class: H.staticClass "foo bar" } (
+  H.div { class_: "foo bar" } (
     H.text "Counter " </>
     H.span {} (H.textB $ map show count) </>
     H.button {} (H.text "+") `output` (\o -> { increment: o.click }) </>

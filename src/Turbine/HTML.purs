@@ -111,30 +111,30 @@ foreign import staticClass :: String -> ClassDescription
 -- | time.
 -- |
 -- | ```purescript
--- | dynamicClass "foo bar baz"
+-- | dynamicClass stringValuedBehavior
 -- | ```
 foreign import dynamicClass :: Behavior String -> ClassDescription
 
--- | Takes a record of boolean valued behaviors. Each key or field in the record
--- | is interpreted as a class name. When a behavior is `true` the class
--- | corresponding to the behavior is added to the element and when it is
--- | `false` it does not exist on the element.
+-- | Takes a class name and a boolean valued behavior. When the behavior is
+-- | `true` the element has the class and when the behavior is `false` the
+-- | element does not have the class.
 -- |
 -- | ```purescript
--- | toggleClass
--- |   { active: isActiveBehavior
--- |   , selected: isSelectedBehavior
--- |   }
+-- | toggleClass "active" isActiveBehavior
+-- | <> toggleClass "selected" isSelectedBehavior
 -- | ```
-foreign import toggleClass :: forall r. RecordOf (Behavior Boolean) r => { | r } -> ClassDescription
+toggleClass :: String -> Behavior Boolean -> ClassDescription
+toggleClass = runFn2 _toggleClass
+
+foreign import _toggleClass :: Fn2 String (Behavior Boolean) ClassDescription
 
 -- | Class descriptions form a semigroup. This makes it convenient to combine
 -- | several types of description and add them to the same element.
 -- |
 -- | ```purescript
--- | E.div { class: staticClass "foo"
--- |                <> dynamicClass beh
--- |                <> toggleClass { selected: isSelected }
+-- | E.div { classes: staticClass "foo"
+-- |                  <> dynamicClass beh
+-- |                  <> toggleClass "selected" isSelected
 -- |       }
 -- | ```
 derive newtype instance semigroupClassDescription :: Semigroup ClassDescription
@@ -143,7 +143,9 @@ derive newtype instance semigroupClassDescription :: Semigroup ClassDescription
 
 -- | This type describes the attributes that all HTML elements accepts.
 type Attributes' r =
-  ( class :: ClassDescription
+  ( class :: Behavior String
+  , class_ :: String
+  , classes :: ClassDescription
   , id :: Behavior String
   | r
   )
@@ -162,90 +164,94 @@ type Output' r =
 
 type Output = Record (Output' ())
 
+-- This type is not really accurate. But, it is much simpler than an accurate
+-- type and this "simplification" does not leak out into the API.
+foreign import processAttributes :: forall a. Record a -> Record a
+
 div :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
-div = runFn2 _div
+div = runFn2 _div <<< processAttributes
 
 foreign import _div :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
 ul :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
-ul = runFn2 _ul
+ul = runFn2 _ul <<< processAttributes
 
 foreign import _ul :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
 li :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
-li = runFn2 _li
+li = runFn2 _li <<< processAttributes
 
 foreign import _li :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
 span :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
-span = runFn2 _span
+span = runFn2 _span <<< processAttributes
 
 foreign import _span :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
 p :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
-p = runFn2 _p
+p = runFn2 _p <<< processAttributes
 
 foreign import _p :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
 h1 :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
-h1 = runFn2 _h1
+h1 = runFn2 _h1 <<< processAttributes
 
 foreign import _h1 :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
 h2 :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
-h2 = runFn2 _h2
+h2 = runFn2 _h2 <<< processAttributes
 
 foreign import _h2 :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
 h3 :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
-h3 = runFn2 _h3
+h3 = runFn2 _h3 <<< processAttributes
 
 foreign import _h3 :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
 h4 :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
-h4 = runFn2 _h4
+h4 = runFn2 _h4 <<< processAttributes
 
 foreign import _h4 :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
 h5 :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
-h5 = runFn2 _h5
+h5 = runFn2 _h5 <<< processAttributes
 
 foreign import _h5 :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
 h6 :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
-h6 = runFn2 _h6
+h6 = runFn2 _h6 <<< processAttributes
 
 foreign import _h6 :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
 label :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
-label = runFn2 _label
+label = runFn2 _label <<< processAttributes
 
 foreign import _label :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
 section :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
-section = runFn2 _section
+section = runFn2 _section <<< processAttributes
 
 foreign import _section :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
 header :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
-header = runFn2 _header
+header = runFn2 _header <<< processAttributes
 
 foreign import _header :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
 footer :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
-footer = runFn2 _footer
+footer = runFn2 _footer <<< processAttributes
 
 foreign import _footer :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
 type ButtonOut = { click :: Stream Unit }
 
 button :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o ButtonOut
-button = runFn2 _button
+button = runFn2 _button <<< processAttributes
 
 foreign import _button :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o ButtonOut)
 
 a :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
-a = runFn2 _a
+a = runFn2 _a <<< processAttributes
 
 foreign import _a :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
@@ -269,7 +275,7 @@ type InputOut' r =
 type InputOut = Record (InputOut' ())
 
 input :: forall a. Subrow a InputAttrs => Record a -> Component {} InputOut
-input = runFn1 _input
+input = runFn1 _input <<< processAttributes
 
 foreign import _input :: forall a. Subrow a InputAttrs => Fn1 (Record a) (Component {} InputOut)
 
@@ -291,7 +297,7 @@ type InputRangeOut = Record (InputRangeOut' ())
 -- | attributes all of which are numbers: `max`, `min`, and `step`. Additionally
 -- | the `value` output is a `Number` and not a `String`.
 inputRange :: forall a. Subrow a (InputRangeAttrs' ()) => Record a -> Component {} { | (InputRangeOut' ()) }
-inputRange = runFn1 _inputRange
+inputRange = runFn1 _inputRange <<< processAttributes
 
 foreign import _inputRange :: forall a. Subrow a (InputRangeAttrs' ()) => Fn1 (Record a) (Component {} ({ | InputRangeOut' ()}))
 
@@ -315,7 +321,7 @@ type CheckboxOutput = Record (CheckboxOut' ())
 -- | Most notably a `checkbox` outputs a behavior named `checked` denoting
 -- | whether or not the checkbox is currently checked.
 checkbox :: forall a. Subrow a CheckboxAttrs => Record a -> Component {} CheckboxOutput
-checkbox = runFn1 _checkbox
+checkbox = runFn1 _checkbox <<< processAttributes
 
 foreign import _checkbox :: forall a. Subrow a CheckboxAttrs => Fn1 (Record a) (Component {} CheckboxOutput)
 
@@ -329,7 +335,7 @@ type TextareaAttrs = TextareaAttrs' ()
 
 -- | A textarea element. Accepts `rows` and `cols` attributes.
 textarea :: forall a. Subrow a TextareaAttrs => Record a -> Component {} InputOut
-textarea = runFn1 _textarea
+textarea = runFn1 _textarea <<< processAttributes
 
 foreign import _textarea :: forall a. Subrow a TextareaAttrs => Fn1 (Record a) (Component {} InputOut)
 
@@ -344,7 +350,7 @@ type ProgressAttrs = ProgressAttrs' ()
 -- | A progress element. At accepts `value` and `max` both of which must be
 -- | `Number` valued.
 progress :: forall a o p. Subrow a ProgressAttrs => Record a -> Component o p -> Component o Output
-progress = runFn2 _progress
+progress = runFn2 _progress <<< processAttributes
 
 foreign import _progress :: forall a o p. Subrow a ProgressAttrs => Fn2 (Record a) (Component o p) (Component o Output)
 
@@ -364,22 +370,22 @@ textB = _textB
 foreign import _textB :: Behavior String -> Component {} Unit
 
 table :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
-table = runFn2 _table
+table = runFn2 _table <<< processAttributes
 
 foreign import _table :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
 th :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
-th = runFn2 _th
+th = runFn2 _th <<< processAttributes
 
 foreign import _th :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
 tr :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
-tr = runFn2 _tr
+tr = runFn2 _tr <<< processAttributes
 
 foreign import _tr :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 
 td :: forall a o p. Subrow a Attributes => Record a -> Component o p -> Component o Output
-td = runFn2 _td
+td = runFn2 _td <<< processAttributes
 
 foreign import _td :: forall a o p. Subrow a Attributes => Fn2 (Record a) (Component o p) (Component o Output)
 

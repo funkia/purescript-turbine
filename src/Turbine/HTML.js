@@ -6,12 +6,30 @@ function arrayOf(a) {
   return [a];
 }
 
+exports.processAttributes = function(attrs) {
+  // This function handles the small differences between the way the attributes
+  // object is structured in purescript-turbine and vanilla Turbine.
+  var newAttrs = Object.assign({}, attrs);
+  if (attrs.classes !== undefined || attrs.class_ !== undefined) {
+    // Only create an array if necessary
+    var classes = [];
+    ["class", "class_", "classes"].forEach(function (key) {
+      classes.push(attrs[key]);
+      delete newAttrs[key];
+    })
+    newAttrs.class = classes;
+  }
+  return newAttrs;
+}
+
 exports.staticClass = arrayOf;
 
 exports.dynamicClass = arrayOf;
 
-exports.toggleClass = function() {
-  return function(o) { return [o]; };
+exports._toggleClass = function(name, behavior) {
+  var obj = {};
+  obj[name] = behavior;
+  return [obj];
 };
 
 exports._h1 = function() {

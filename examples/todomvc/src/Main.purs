@@ -5,8 +5,8 @@ import Prelude
 import Data.Array (filter, null, snoc, length)
 import Data.Traversable (fold)
 import Effect (Effect)
-import Hareactive.Types (Behavior, Stream, Now)
 import Hareactive.Combinators as H
+import Hareactive.Types (Behavior, Stream, Now)
 import Turbine (Component, modelView, output, runComponent, withStatic, (</>), list)
 import Turbine.HTML as H
 import Web.UIEvent.KeyboardEvent as KE
@@ -29,7 +29,7 @@ todoInput = modelView model view
       let addItem = H.filter (_ /= "") $ H.snapshot clearedValue enterPressed
       pure { clearedValue, addItem }
     view input _ =
-      H.input ({ value: input.clearedValue, class: H.staticClass "new-todo" } `withStatic` {
+      H.input ({ value: input.clearedValue, class_: "new-todo" } `withStatic` {
         autofocus: true,
         placeholder: "What needs to be done?"
       }) `output` (\o -> { keyup: o.keyup, value: o.value })
@@ -61,16 +61,19 @@ todoItem = modelView model view
       let delete = input.deleteClicked $> options.id
       pure { isComplete, name, isEditing, delete }
     view input _ =
-      H.li ({ class: H.staticClass "todo" <> H.toggleClass { completed: input.isComplete, editing: input.isEditing } }) (
-        H.div ({ class: (H.staticClass "view") }) (
+      H.li ({ class_: "todo"
+            , classes: H.toggleClass "completed" input.isComplete
+                    <> H.toggleClass "editing" input.isEditing
+            }) (
+        H.div ({ class_: "view" }) (
           H.checkbox
             ({ checked: input.isComplete
-             , class: H.staticClass "toggle"
+             , class_: "toggle"
             }) `output` (\o -> { toggleTodo: o.checkedChange }) </>
           H.label {} (H.textB input.name) `output` (\o -> { startEditing: o.dblclick }) </>
-          H.button { class: H.staticClass "destroy" } (H.text "") `output` (\o -> { deleteClicked: o.click })
+          H.button { class_: "destroy" } (H.text "") `output` (\o -> { deleteClicked: o.click })
         ) </>
-        H.input ({ value: input.name, class: H.staticClass "edit" }) `output` (\o -> {
+        H.input ({ value: input.name, class_: "edit" }) `output` (\o -> {
           name: o.value,
           nameKeyup: o.keyup,
           nameBlur: o.blur
@@ -91,11 +94,11 @@ todoFooter = modelView model view
       let
         hidden = map null input.todos
       in
-        H.footer { class: H.staticClass "footer" <> H.toggleClass { hidden } } (
-          H.span { class: H.staticClass "footer" } (
+        H.footer { class_: "footer", classes: H.toggleClass "hidden" hidden } (
+          H.span { class_: "footer" } (
             H.textB (formatRemainder <$> input.itemsLeft)
           ) </>
-          H.ul { class: H.staticClass "filters" } (
+          H.ul { class_: "filters" } (
             H.text "filters"
           ) </>
           H.button {} (H.text "Clear completed")
@@ -118,11 +121,11 @@ todoAppModel input _ = do
 
 todoAppView :: TodoAppModelOut -> Unit -> Component TodoAppViewOut _
 todoAppView input _ =
-  H.section { class: H.staticClass "todoapp" } (
-    H.header { class: H.staticClass "header" } (
+  H.section { class_: "todoapp" } (
+    H.header { class_: "header" } (
       H.h1 {} (H.text "todo") </>
       todoInput {} `output` (\o -> { addItem: o.addItem }) </>
-      H.ul { class: H.staticClass "todo-list" } (
+      H.ul { class_: "todo-list" } (
         list (\i -> todoItem i `output` identity) input.todos (_.id) `output` (\o -> { items: o })
       ) </>
       todoFooter { todos: input.items }

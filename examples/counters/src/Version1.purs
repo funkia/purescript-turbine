@@ -4,7 +4,6 @@ module Counters.Version1
 
 import Prelude
 
-import Control.Apply (lift2)
 import Data.Array (cons, filter)
 import Data.Foldable (fold, foldr)
 import Hareactive.Types (Behavior, Stream, Now)

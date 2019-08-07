@@ -10,14 +10,10 @@ exports.processAttributes = function(attrs) {
   // This function handles the small differences between the way the attributes
   // object is structured in purescript-turbine and vanilla Turbine.
   var newAttrs = Object.assign({}, attrs);
-  if (attrs.classes !== undefined || attrs.class_ !== undefined) {
+  if (attrs.classes !== undefined) {
     // Only create an array if necessary
-    var classes = [];
-    ["class", "class_", "classes"].forEach(function (key) {
-      classes.push(attrs[key]);
-      delete newAttrs[key];
-    })
-    newAttrs.class = classes;
+    newAttrs.class = [attrs.class, attrs.classes];
+    delete newAttrs.classes;
   }
   return newAttrs;
 }

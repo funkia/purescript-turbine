@@ -144,7 +144,6 @@ derive newtype instance semigroupClassDescription :: Semigroup ClassDescription
 -- | This type describes the attributes that all HTML elements accepts.
 type Attributes' r =
   ( class :: Behavior String
-  , class_ :: String
   , classes :: ClassDescription
   , id :: Behavior String
   | r

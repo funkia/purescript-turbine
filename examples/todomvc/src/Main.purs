@@ -29,7 +29,7 @@ todoInput = modelView model view
       let addItem = H.filter (_ /= "") $ H.snapshot clearedValue enterPressed
       pure { clearedValue, addItem }
     view input _ =
-      H.input ({ value: input.clearedValue, class_: "new-todo" } `withStatic` {
+      H.input ({ value: input.clearedValue, class: pure "new-todo" } `withStatic` {
         autofocus: true,
         placeholder: "What needs to be done?"
       }) `output` (\o -> { keyup: o.keyup, value: o.value })
@@ -61,19 +61,19 @@ todoItem = modelView model view
       let delete = input.deleteClicked $> options.id
       pure { isComplete, name, isEditing, delete }
     view input _ =
-      H.li ({ class_: "todo"
+      H.li ({ class: pure "todo"
             , classes: H.toggleClass "completed" input.isComplete
                     <> H.toggleClass "editing" input.isEditing
             }) (
-        H.div ({ class_: "view" }) (
+        H.div ({ class: pure "view" }) (
           H.checkbox
             ({ checked: input.isComplete
-             , class_: "toggle"
+             , class: pure "toggle"
             }) `output` (\o -> { toggleTodo: o.checkedChange }) </>
           H.label {} (H.textB input.name) `output` (\o -> { startEditing: o.dblclick }) </>
-          H.button { class_: "destroy" } (H.text "") `output` (\o -> { deleteClicked: o.click })
+          H.button { class: pure "destroy" } (H.text "") `output` (\o -> { deleteClicked: o.click })
         ) </>
-        H.input ({ value: input.name, class_: "edit" }) `output` (\o -> {
+        H.input ({ value: input.name, class: pure "edit" }) `output` (\o -> {
           name: o.value,
           nameKeyup: o.keyup,
           nameBlur: o.blur
@@ -94,11 +94,11 @@ todoFooter = modelView model view
       let
         hidden = map null input.todos
       in
-        H.footer { class_: "footer", classes: H.toggleClass "hidden" hidden } (
-          H.span { class_: "footer" } (
+        H.footer { class: pure "footer", classes: H.toggleClass "hidden" hidden } (
+          H.span { class: pure "footer" } (
             H.textB (formatRemainder <$> input.itemsLeft)
           ) </>
-          H.ul { class_: "filters" } (
+          H.ul { class: pure "filters" } (
             H.text "filters"
           ) </>
           H.button {} (H.text "Clear completed")
@@ -121,11 +121,11 @@ todoAppModel input _ = do
 
 todoAppView :: TodoAppModelOut -> Unit -> Component TodoAppViewOut _
 todoAppView input _ =
-  H.section { class_: "todoapp" } (
-    H.header { class_: "header" } (
+  H.section { class: pure "todoapp" } (
+    H.header { class: pure "header" } (
       H.h1 {} (H.text "todo") </>
       todoInput {} `output` (\o -> { addItem: o.addItem }) </>
-      H.ul { class_: "todo-list" } (
+      H.ul { class: pure "todo-list" } (
         list (\i -> todoItem i `output` identity) input.todos (_.id) `output` (\o -> { items: o })
       ) </>
       todoFooter { todos: input.items }

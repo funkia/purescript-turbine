@@ -30,7 +30,7 @@ counterModel { increment, decrement, delete } id = do
 
 counterView :: CounterOut -> Int -> Component CounterViewOut _
 counterView { count } _ =
-  H.div { class_: "foo bar" } (
+  H.div { class: pure "foo bar" } (
     H.text "Counter " </>
     H.span {} (H.textB $ map show count) </>
     H.button {} (H.text "+") `output` (\o -> { increment: o.click }) </>

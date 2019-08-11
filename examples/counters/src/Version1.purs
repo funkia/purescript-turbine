@@ -15,20 +15,17 @@ import Turbine.HTML as H
 type CounterOut = {count :: Behavior Int}
 type CounterViewOut = {increment :: Stream Unit, decrement :: Stream Unit}
 
-counterModel :: CounterViewOut -> Int -> Now CounterOut
-counterModel { increment, decrement } id = do
-  let changes = (increment $> 1) <> (decrement $> -1)
-  count <- accum (+) 0 changes
-  pure { count }
-
-counterView :: CounterOut -> Int -> Component CounterViewOut _
-counterView {count} _ =
-  H.div {} (
-    H.text "Counter " </>
-    H.span {} (H.textB $ map show count) </>
-    H.button {} (H.text "+" ) `output` (\o -> { increment: o.click }) </>
-    H.button {} (H.text "-" ) `output` (\o -> { decrement: o.click })
-  )
-
 counter :: Int -> Component {} CounterOut
-counter = modelView counterModel counterView
+counter id = modelView model view
+  where
+    model { increment, decrement } = do
+      let changes = (increment $> 1) <> (decrement $> -1)
+      count <- accum (+) 0 changes
+      pure { count }
+    view { count } =
+      H.div {} (
+        H.text "Counter " </>
+        H.span {} (H.textB $ map show count) </>
+        H.button {} (H.text "+" ) `output` (\o -> { increment: o.click }) </>
+        H.button {} (H.text "-" ) `output` (\o -> { decrement: o.click })
+      )

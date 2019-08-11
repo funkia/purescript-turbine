@@ -38,6 +38,8 @@ exports._list = function() {
   return T.list;
 }
 
-exports._modelView = T.modelView;
+exports._modelView = function(model, view) {
+  return T.modelView(model, view)();
+}
 
 exports.dynamic = T.dynamic;

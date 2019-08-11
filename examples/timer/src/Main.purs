@@ -16,13 +16,13 @@ initialMaxTime :: Number
 initialMaxTime = 10.0
 
 timer :: Component {} _
-timer = modelView model view unit
+timer = modelView model view
   where
-    model input _ = do
+    model input = do
       let change = (\max cur -> if cur < max then 1.0 else 0.0) <$> input.maxTime <*> input.elapsed
       elapsed <- H.sample $ resetOn (H.integrateFrom change) input.resetTimer
       pure { maxTime: input.maxTime, elapsed }
-    view input _ =
+    view input =
       H.div {} (
         H.h1 {} (H.text "Timer") </>
         H.span {} (H.text "0") </>

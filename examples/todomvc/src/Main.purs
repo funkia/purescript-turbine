@@ -20,15 +20,15 @@ type NewTodo =
   , name :: String
   }
 
-todoInput :: {} -> Component {} { clearedValue :: Behavior String, addItem :: Stream String }
+todoInput ::  Component {} { clearedValue :: Behavior String, addItem :: Stream String }
 todoInput = modelView model view
   where
-    model { keyup, value } {} = do
+    model { keyup, value } = do
       let enterPressed = H.filter (isKey "Enter") keyup
       clearedValue <- H.stepper "" ((enterPressed $> "") <> H.changes value)
       let addItem = H.filter (_ /= "") $ H.snapshot clearedValue enterPressed
       pure { clearedValue, addItem }
-    view input _ =
+    view input =
       H.input ({ value: input.clearedValue, class: pure "new-todo" } `withStatic` {
         autofocus: true,
         placeholder: "What needs to be done?"
@@ -42,9 +42,9 @@ type TodoItemOut =
   }
 
 todoItem :: NewTodo -> Component {} TodoItemOut
-todoItem = modelView model view
+todoItem options = modelView model view
   where
-    model input options = do
+    model input = do
       isComplete <- H.stepper false input.toggleTodo
       let cancelEditing = H.filter (isKey "Escape") input.nameKeyup
       let finishEditing = H.filter (isKey "Enter") input.nameKeyup
@@ -60,7 +60,7 @@ todoItem = modelView model view
       -- If the delete button is clicked we should signal to parent
       let delete = input.deleteClicked $> options.id
       pure { isComplete, name, isEditing, delete }
-    view input _ =
+    view input =
       H.li ({ class: pure "todo"
             , classes: H.toggleClass "completed" input.isComplete
                     <> H.toggleClass "editing" input.isEditing
@@ -85,12 +85,12 @@ todoItem = modelView model view
 formatRemainder :: Int -> String
 formatRemainder n = (show n) <> " item" <> (if n == 1 then "" else "s") <> " left"
 
-todoFooter = modelView model view
+todoFooter options = modelView model view
   where
-    model input options = do
+    model input = do
       let itemsLeft = H.moment (\at -> length $ filter (not <<< at <<< (_.isComplete)) (at options.todos))
       pure { todos: options.todos, itemsLeft }
-    view input _ =
+    view input =
       let
         hidden = map null input.todos
       in
@@ -108,8 +108,8 @@ type TodoAppModelOut = { todos :: Behavior (Array NewTodo), items :: Behavior (A
 
 type TodoAppViewOut = { addItem :: Stream String, items :: Behavior (Array TodoItemOut) }
 
-todoAppModel :: TodoAppViewOut -> Unit -> Now TodoAppModelOut
-todoAppModel input _ = do
+todoAppModel :: TodoAppViewOut -> Now TodoAppModelOut
+todoAppModel input = do
   nextId <- H.accum (+) 0 (input.addItem $> 1)
   let itemToDelete = H.shiftCurrent $ map (fold <<< map _.delete) input.items
   let newTodo = H.snapshotWith (\name id -> { name, id }) nextId input.addItem
@@ -119,12 +119,12 @@ todoAppModel input _ = do
   )
   pure { todos, items: input.items }
 
-todoAppView :: TodoAppModelOut -> Unit -> Component TodoAppViewOut _
-todoAppView input _ =
+todoAppView :: TodoAppModelOut -> Component TodoAppViewOut _
+todoAppView input =
   H.section { class: pure "todoapp" } (
     H.header { class: pure "header" } (
       H.h1 {} (H.text "todo") </>
-      todoInput {} `output` (\o -> { addItem: o.addItem }) </>
+      todoInput `output` (\o -> { addItem: o.addItem }) </>
       H.ul { class: pure "todo-list" } (
         list (\i -> todoItem i `output` identity) input.todos (_.id) `output` (\o -> { items: o })
       ) </>
@@ -132,7 +132,7 @@ todoAppView input _ =
     )
   )
 app :: Component {} TodoAppModelOut
-app = modelView todoAppModel todoAppView unit
+app = modelView todoAppModel todoAppView
 
 main :: Effect Unit
 main = runComponent "#mount" app

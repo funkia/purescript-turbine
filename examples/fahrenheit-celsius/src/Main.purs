@@ -21,8 +21,8 @@ type AppViewOut =
 parseNumbers :: Stream String -> Stream Number
 parseNumbers = filterJust <<< (map fromString)
 
-appModel :: _ -> Unit -> Now AppModelOut
-appModel { fahrenChange, celsiusChange } _ =
+appModel :: _ -> Now AppModelOut
+appModel { fahrenChange, celsiusChange } =
   let
     fahrenToCelsius f = (f - 32.0) / 1.8
     celsiusToFahren c = (c * 9.0) / 5.0 + 32.0
@@ -33,8 +33,8 @@ appModel { fahrenChange, celsiusChange } _ =
     fahren <- stepper 0.0 (fahrenNrChange <> (celsiusToFahren <$> celsiusNrChange))
     pure { fahren, celsius }
 
-appView :: AppModelOut -> Unit -> Component _ _
-appView { celsius, fahren } _ =
+appView :: AppModelOut -> Component _ _
+appView { celsius, fahren } =
   H.div {} (
     H.div {} (
       H.label {} (H.text "Fahrenheit") </>
@@ -47,7 +47,7 @@ appView { celsius, fahren } _ =
   )
 
 app :: Component {} AppModelOut
-app = modelView appModel appView unit
+app = modelView appModel appView
 
 main :: Effect Unit
 main = runComponent "#mount" app

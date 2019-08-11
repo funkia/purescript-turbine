@@ -74,10 +74,10 @@ instance monadEffectComponent :: (RL.RowToList row RL.Nil) => MonadEffect (Compo
 
 foreign import liftEffectComponent :: forall a row. RL.RowToList row RL.Nil => Effect a -> Component { | row } a
 
-modelView :: forall o p a x. (o -> x -> Now p) -> (p -> x -> Component o a) -> (x -> Component {} p)
-modelView m v = runFn2 _modelView (mkFn2 m) (mkFn2 v)
+modelView :: forall o p a. (o -> Now p) -> (p -> Component o a) -> Component {} p
+modelView m v = runFn2 _modelView m v
 
-foreign import _modelView :: forall o p a x. Fn2 (Fn2 o x (Now p)) (Fn2 p x (Component o a)) (x -> Component {} p)
+foreign import _modelView :: forall o p a. Fn2 (o -> Now p) (p -> Component o a) (Component {} p)
 
 runComponent :: forall o a. String -> Component o a -> Effect Unit
 runComponent = runEffectFn2 _runComponent

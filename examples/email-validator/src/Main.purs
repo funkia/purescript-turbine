@@ -21,11 +21,11 @@ validToString :: Boolean -> String
 validToString = if _ then "valid" else "invalid"
 
 app :: Component {} { isValid :: Behavior Boolean }
-app = modelView model view unit
+app = modelView model view
   where
-    model { email } _ =
+    model { email } =
       pure { isValid: isValidEmail <$> email }
-    view { isValid } _ =
+    view { isValid } =
       H.h1 {} (H.text "Email validator") </>
       H.input {} `output` (\o -> { email: o.value }) </>
         H.p {} (

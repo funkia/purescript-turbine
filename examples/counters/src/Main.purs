@@ -18,8 +18,8 @@ versionToComponent Two = Version2.counterList [0] $> {}
 
 type AppModelOut = {version :: Behavior (Component {} {})}
 
-appModel :: AppViewOut -> Unit -> Now AppModelOut
-appModel input _ = do
+appModel :: AppViewOut -> Now AppModelOut
+appModel input = do
   version <- stepper One (input.selectVersion1 <> input.selectVersion2)
   pure { version: versionToComponent <$> version }
 
@@ -28,13 +28,13 @@ type AppViewOut =
   , selectVersion2 :: Stream Version
   }
 
-appView :: AppModelOut -> Unit -> Component AppViewOut {}
-appView out _ =
+appView :: AppModelOut -> Component AppViewOut {}
+appView out =
   H.button {} (H.text "Version 1") `output` (\o -> { selectVersion1: o.click $> One }) </>
   H.button {} (H.text "Version 2") `output` (\o -> { selectVersion2: o.click $> Two }) </>
   (dynamic out.version)
 
-app = modelView appModel appView unit
+app = modelView appModel appView
 
 main :: Effect Unit
 main = runComponent "#mount" app

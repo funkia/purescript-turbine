@@ -48,7 +48,7 @@ fetchZip zipCode = do
     then "Zip code does not exist"
     else "Valid zip code for " <> "Foo"
 
-zipModel { zipCode } _ = do
+zipModel { zipCode } = do
   let
     zipCodeChange = changes zipCode
     Tuple validZipCodeChange invalidZipCodeChange = split isValidZip zipCodeChange
@@ -61,7 +61,7 @@ zipModel { zipCode } _ = do
   status <- stepper "" statusChange
   pure { status }
 
-zipView { status } _ =
+zipView { status } =
   H.div_ (
     H.span_ (H.text "Please type a valid US zip code: ") </>
     H.input (static { placeholder: "Zip code" }) `output` (\o -> { zipCode: o.inputValue }) </>
@@ -70,7 +70,7 @@ zipView { status } _ =
   )
 
 app :: Component {} AppModelOut
-app = modelView zipModel zipView unit
+app = modelView zipModel zipView
 
 main :: Effect Unit
 main = runComponent "#mount" app

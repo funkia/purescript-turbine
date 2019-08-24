@@ -18,7 +18,7 @@ module Turbine
 import Prelude
 
 import Control.Apply (lift2)
-import Data.Function.Uncurried (Fn2, runFn2, mkFn2, Fn3, runFn3)
+import Data.Function.Uncurried (Fn2, runFn2, Fn3, runFn3)
 import Data.Symbol (class IsSymbol, SProxy(..))
 import Effect (Effect)
 import Effect.Class (class MonadEffect)
@@ -36,21 +36,21 @@ foreign import data Component :: Type -> Type -> Type
 
 -- Component instances
 
-instance semigroupComponent :: Semigroup a => Semigroup (Component o a) where
+instance semigroupComponent :: Semigroup o => Semigroup (Component a o) where
   append = lift2 append
 
 instance monoidComponent :: (Monoid a, RL.RowToList row RL.Nil) => Monoid (Component { | row } a) where
   mempty = pure mempty
 
-instance functorComponent :: Functor (Component o) where
+instance functorComponent :: Functor (Component a) where
   map = runFn2 _map
 
-foreign import _map :: forall o a b. Fn2 (a -> b) (Component o a) (Component o b)
+foreign import _map :: forall a o p. Fn2 (o -> p) (Component a o) (Component a p)
 
-instance applyComponent :: Apply (Component o) where
+instance applyComponent :: Apply (Component a) where
   apply = runFn2 _apply
 
-foreign import _apply :: forall o a b. Fn2 (Component o (a -> b)) (Component o a) (Component o b)
+foreign import _apply :: forall a o p. Fn2 (Component a (o -> p)) (Component a o) (Component a p)
 
 -- Components where the first type argument is `{}` form an applicative. `pure
 -- a` returns a component that does nothing but with the empty record `{}` as
@@ -60,10 +60,10 @@ instance applicativeComponent :: (RL.RowToList row RL.Nil) => Applicative (Compo
 
 foreign import _pure :: forall a row. RL.RowToList row RL.Nil => a -> Component { | row } a
 
-instance bindComponent :: Bind (Component o) where
+instance bindComponent :: Bind (Component a) where
   bind = runFn2 _bind
 
-foreign import _bind :: forall o a b. Fn2 (Component o a) (a -> Component o b) (Component o b)
+foreign import _bind :: forall a o p. Fn2 (Component a o) (o -> Component a p) (Component a p)
 
 instance monadComponent :: (RL.RowToList row RL.Nil) => Monad (Component { | row })
 
@@ -74,15 +74,15 @@ instance monadEffectComponent :: (RL.RowToList row RL.Nil) => MonadEffect (Compo
 
 foreign import liftEffectComponent :: forall a row. RL.RowToList row RL.Nil => Effect a -> Component { | row } a
 
-modelView :: forall o p a. (o -> Now p) -> (p -> Component o a) -> Component {} p
+modelView :: forall a o p. (o -> Now p) -> (p -> Component a o) -> Component p {}
 modelView m v = runFn2 _modelView m v
 
-foreign import _modelView :: forall o p a. Fn2 (o -> Now p) (p -> Component o a) (Component {} p)
+foreign import _modelView :: forall a o p. Fn2 (o -> Now p) (p -> Component a o) (Component p {})
 
-runComponent :: forall o a. String -> Component o a -> Effect Unit
+runComponent :: forall a o. String -> Component a o -> Effect Unit
 runComponent = runEffectFn2 _runComponent
 
-foreign import _runComponent :: forall o a. EffectFn2 String (Component o a) Unit
+foreign import _runComponent :: forall a o. EffectFn2 String (Component a o) Unit
 
 -- | Turns a behavior of a component into a component of a behavior. This
 -- | function is used to create dynamic HTML where the structure of the HTML
@@ -91,7 +91,7 @@ foreign import _runComponent :: forall o a. EffectFn2 String (Component o a) Uni
 -- | ```purescript
 -- | dynamic (map (\b -> if b else (div {} ) then) behavior)
 -- | ```
-foreign import dynamic :: forall o a. Behavior (Component o a) -> Component {} (Behavior o)
+foreign import dynamic :: forall a o. Behavior (Component a o) -> Component (Behavior o) {}
 
 -- | Type class implemented by `Int`, `Number`, and `String`. Used to represent
 -- | overloads.
@@ -108,17 +108,17 @@ instance keyString :: Key String where
   keyNoop = identity
 
 list :: forall a o p k. Key k =>
-  (a -> Component o p) -> Behavior (Array a) -> (a -> k) -> Component {} (Behavior (Array o))
+  (a -> Component a p) -> Behavior (Array a) -> (a -> k) -> Component {} (Behavior (Array o))
 list = runFn3 _list
 
 foreign import _list :: forall a o p k. Key k =>
-  Fn3 (a -> Component o p) (Behavior (Array a)) (a -> k) (Component {} (Behavior (Array o)))
+  Fn3 (a -> Component a p) (Behavior (Array a)) (a -> k) (Component {} (Behavior (Array o)))
 
 -- | Combines two components and merges their explicit output.
-merge :: forall a o b p q. Union o p q => Component { | o } a -> Component { | p } b -> Component { | q } {}
+merge :: forall a o b p q. Union o p q => Component a { | o } -> Component b { | p } -> Component {} { | q }
 merge = runFn2 _merge
 
-foreign import _merge :: forall a o b p q. Union o p q => Fn2 (Component { | o } a) (Component { | p } b) (Component { | q } {})
+foreign import _merge :: forall a o b p q. Union o p q => Fn2 (Component a { | o }) (Component b { | p }) (Component {} { | q })
 infixl 0 merge as </>
 
 -- | Copies non-explicit output into explicit output.
@@ -128,12 +128,12 @@ infixl 0 merge as </>
 -- | ```purescript
 -- | button (text "Fire missiles!") `output` (\o -> { fireMissiles })
 -- | ```
-output :: forall a o p q. Union o p q => Component { | o } a -> (a -> { | p }) -> Component { | q } a
+output :: forall a o p q. Union o p q => Component a { | o } -> (a -> { | p }) -> Component a { | q }
 output = runFn2 _output
 
-foreign import _output :: forall a o p q. Union o p q => Fn2 (Component { | o } a) (a -> { | p }) (Component { | q } a)
+foreign import _output :: forall a o p q. Union o p q => Fn2 (Component a { | o }) (a -> { | p }) (Component a { | q })
 
-foreign import loop :: forall a o. (a -> Component o a) -> Component o a
+foreign import loop :: forall a o. (o -> Component a o) -> Component o {}
 
 mapHeterogenousRecord :: forall row xs f row'
    . RL.RowToList row xs

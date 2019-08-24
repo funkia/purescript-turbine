@@ -13,10 +13,10 @@ import Turbine.HTML as H
 data Version = One | Two
 
 versionToComponent :: Version -> Component {} {}
-versionToComponent One = Version1.counter 0 $> {}
-versionToComponent Two = Version2.counterList [0] $> {}
+versionToComponent One = Version1.counter 0 `output` (const {})
+versionToComponent Two = Version2.counterList [0] `output` (const {})
 
-type AppModelOut = {version :: Behavior (Component {} {})}
+type AppModelOut = { version :: Behavior (Component {} {}) }
 
 appModel :: AppViewOut -> Now AppModelOut
 appModel input = do
@@ -28,7 +28,7 @@ type AppViewOut =
   , selectVersion2 :: Stream Version
   }
 
-appView :: AppModelOut -> Component AppViewOut {}
+appView :: AppModelOut -> Component {} AppViewOut
 appView out =
   H.button {} (H.text "Version 1") `output` (\o -> { selectVersion1: o.click $> One }) </>
   H.button {} (H.text "Version 2") `output` (\o -> { selectVersion2: o.click $> Two }) </>

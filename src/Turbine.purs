@@ -6,6 +6,9 @@ module Turbine
   , (</>)
   , dynamic
   , output
+  , component
+  , ComponentResult
+  , result
   , class Key
   , keyNoop
   , list
@@ -107,12 +110,12 @@ instance keyNumber :: Key Number where
 instance keyString :: Key String where
   keyNoop = identity
 
-list :: forall a o p k. Key k =>
-  (a -> Component a p) -> Behavior (Array a) -> (a -> k) -> Component {} (Behavior (Array o))
+list :: forall a b o k. Key k =>
+  (a -> Component b o) -> Behavior (Array a) -> (a -> k) -> Component (Behavior (Array o)) {}
 list = runFn3 _list
 
-foreign import _list :: forall a o p k. Key k =>
-  Fn3 (a -> Component a p) (Behavior (Array a)) (a -> k) (Component {} (Behavior (Array o)))
+foreign import _list :: forall a b o k. Key k =>
+  Fn3 (a -> Component b o) (Behavior (Array a)) (a -> k) (Component (Behavior (Array o)) {})
 
 -- | Combines two components and merges their explicit output.
 merge :: forall a o b p q. Union o p q => Component a { | o } -> Component b { | p } -> Component {} { | q }
@@ -128,12 +131,20 @@ infixl 0 merge as </>
 -- | ```purescript
 -- | button (text "Fire missiles!") `output` (\o -> { fireMissiles })
 -- | ```
-output :: forall a o p q. Union o p q => Component a { | o } -> (a -> { | p }) -> Component a { | q }
+output :: forall a o p q. Union o p q => Component a { | o } -> (a -> { | p }) -> Component {} { | q }
 output = runFn2 _output
 
-foreign import _output :: forall a o p q. Union o p q => Fn2 (Component a { | o }) (a -> { | p }) (Component a { | q })
+foreign import _output :: forall a o p q. Union o p q => Fn2 (Component a { | o }) (a -> { | p }) (Component {} { | q })
 
-foreign import loop :: forall a o. (o -> Component a o) -> Component o {}
+type ComponentResult a o p =
+  { component :: Component a o
+  , available :: p
+  }
+
+result :: forall a o p f. Applicative f => Component a o -> p -> f (ComponentResult a o p)
+result c a = pure { component: c, available: a }
+
+foreign import component :: forall a o p. (o -> Now (ComponentResult a o p)) -> Component p {}
 
 mapHeterogenousRecord :: forall row xs f row'
    . RL.RowToList row xs

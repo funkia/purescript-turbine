@@ -9,7 +9,7 @@ import Data.Array (cons, filter)
 import Data.Foldable (fold, foldr)
 import Hareactive.Combinators (accum, scan, shiftCurrent)
 import Hareactive.Types (Behavior, Stream, Now)
-import Turbine (Component, list, modelView, output, (</>))
+import Turbine (Component, list, modelView, output, component, result, (</>))
 import Turbine.HTML as H
 
 type CounterOut =
@@ -17,7 +17,7 @@ type CounterOut =
   , delete :: Stream Int
   }
 
-counter :: Int -> Component {} CounterOut
+counter :: Int -> Component CounterOut {}
 counter id = modelView model view
   where
     model { increment, decrement, delete } = do
@@ -33,6 +33,19 @@ counter id = modelView model view
         H.button {} (H.text "x") `output` (\o -> { delete: o.click })
       )
 
+{-- counter :: Int -> Component CounterOut {} --}
+{-- counter id = component \on -> do --}
+{--   count <- accum (+) 0 on.change --}
+{--   ( --}
+{--     H.div {} ( --}
+{--       H.text "Counter " </> --}
+{--       H.span {} (H.textB $ map show count) </> --}
+{--       H.button {} (H.text "+" ) `output` (\o -> { change: o.click $> 1 }) </> --}
+{--       H.button {} (H.text "-" ) `output` (\o -> { change: o.click $> -1 }) </> --}
+{--       H.button {} (H.text "x") `output` (\o -> { delete: o.click }) --}
+{--     ) --}
+{--   ) `result` { count, delete: on.delete $> id } --}
+
 type ListOut =
   { sum :: Behavior Int
   , counterIds :: Behavior (Array Int)
@@ -42,7 +55,7 @@ type ListViewOut =
   , listOut :: Behavior (Array CounterOut)
   }
 
-counterList :: Array Int -> Component {} ListOut
+counterList :: Array Int -> Component ListOut {}
 counterList init = modelView counterListModel counterListView
   where
     counterListModel { addCounter, listOut } = do

@@ -28,18 +28,15 @@ A purely functional library for building user interfaces powered by FRP.
 ![single counter GIF](examples/counters/single-counter.gif)
 
 ```purescript
-counterModel { increment, decrement } init = do
-  let changes = (increment $> 1) <> (decrement $> -1)
-  count <- scan (+) init changes
-  pure { count }
-
-counterView {count} =
-  H.text "Counter " </>
-  H.span (H.textB $ map show count) </>
-  H.button "+" `output` (\o -> { increment: o.click }) </>
-  H.button "-" `output` (\o -> { decrement: o.click })
-
-counter = modelView counterModel counterView
+counter id = component \on -> do
+  count <- accum (+) 0 on.change
+  ( H.div {} (
+      H.text "Counter " </>
+      H.span {} (H.textB $ map show count) </>
+      H.button {} (H.text "+" ) `output` (\o -> { change: o.click $> 1 }) </>
+      H.button {} (H.text "-" ) `output` (\o -> { change: o.click $> -1 })
+    )
+  ) `result` {}
 
 main = runComponent "#mount" (counter 0)
 ```
@@ -52,46 +49,41 @@ counters can be deleted. The aggregated sum of all the counters is shown.
 ![list of counters GIF](examples/counters/list-counter.gif)
 
 ```purescript
-counterModel { increment, decrement, delete } id = do
-  let changes = (increment $> 1) <> (decrement $> -1)
-  count <- sample $ scan (+) 0 changes
-  pure { count, delete: delete $> id }
+counter id = component \on -> do
+  count <- accum (+) 0 on.change
+  ( H.div {} (
+      H.text "Counter " </>
+      H.span {} (H.textB $ map show count) </>
+      H.button {} (H.text "+" ) `output` (\o -> { change: o.click $> 1 }) </>
+      H.button {} (H.text "-" ) `output` (\o -> { change: o.click $> -1 }) </>
+      H.button {} (H.text "x") `output` (\o -> { delete: o.click })
+    )
+  ) `result` { count, delete: on.delete $> id }
 
-counterView { count } =
-  H.div (
-    H.text "Counter" </>
-    H.span {} (H.textB $ map show count) </>
-    H.button {} "+" `output` (\o -> { increment: o.click }) </>
-    H.button {} "-" `output` (\o -> { decrement: o.click }) </>
-    H.button {} "x" `output` (\o -> { delete: o.click })
-  )
-
-counter = modelView counterModel counterView
-
-counterListModel {addCounter, listOut} init = do
-  let sum = listOut >>= (map (_.count) >>> foldr (lift2 (+)) (pure 0))
-
-  let removeId = map (fold <<< map (_.delete)) listOut
-  let removeCounter = map (\i -> filter (i /= _)) (switchStream removeId)
-
-  nextId <- sample $ scanS (+) 0 (addCounter $> 1)
+counterList init = component \on -> do
+  let sum = on.listOut >>= (map (_.count) >>> foldr (lift2 (+)) (pure 0))
+  let removeId = map (fold <<< map (_.delete)) on.listOut
+  let removeCounter = map (\i -> filter (i /= _)) (shiftCurrent removeId)
+  nextId <- scan (+) 0 (on.addCounter $> 1)
   let appendCounter = cons <$> nextId
-
-  counterIds <- sample $ scan ($) init (appendCounter <> removeCounter)
-  pure {sum, counterIds}
-
-counterListView { sum, counterIds } _ =
-  H.div {} (
-    H.h1 {} (H.text "Counters") </>
-    H.span {} (H.textB (map (\n -> "Sum " <> show n) sum)) </>
-    H.button {} (H.text "Add counter") `output` (\o -> { addCounter: o.click }) </>
-    list (\id -> counter id `output` identity) counterIds identity `output` (\o -> { listOut: o })
-  )
-
-counterList = modelView counterListModel counterListView
+  counterIds <- accum ($) init (appendCounter <> removeCounter)
+  ( H.div {} (
+      H.h1 {} (H.text "Counters") </>
+      H.span {} (H.textB (map (\n -> "Sum " <> show n) sum)) </>
+      H.button {} (H.text "Add counter") `output` (\o -> { addCounter: o.click }) </>
+      list (\id -> counter id `output` identity) counterIds identity `output` (\o -> { listOut: o })
+    )
+  ) `result` {}
 
 main = runComponent "#mount" (counterList [0])
 ```
+
+## Documentation
+
+- [purescript-turbine-starter](https://github.com/funkia/purescript-turbine-starter) — A starter kit with Turbine pre-setup.
+- [Tutorial](./docs/tutorial.md)
+- [API documentation on Pursuit](https://pursuit.purescript.org/packages/purescript-turbine)
+- [Examples](#example)
 
 ## Examples
 
@@ -101,7 +93,7 @@ main = runComponent "#mount" (counterList [0])
 - [Continuous time](/examples/continuous-time) – A very simple example showing how to work with continuous time.
 - [Timer](/examples/timer) – A more complicated example demonstrating continuous time by implementing a timer with a progress bar.
 - [Zip codes](/examples/zip-codes) – A zip code validator. Shows how to perform `Effect`s using FRP.
-- [TodoMVC](/examples/todomvc) – The classi TodoMVC example (with no routing yet).
+- [TodoMVC](/examples/todomvc) – The classic TodoMVC example (still has a couple of bugs and no routing).
 
 ## Installation
 
@@ -115,7 +107,6 @@ npm i @funkia/turbine
 bower install --save purescript-turbine
 ```
 
-## Documentation
-
-- [Tutorial](./docs/tutorial.md)
-- [API documentation on Pursuit](https://pursuit.purescript.org/packages/purescript-turbine)
+Alternative, use the
+[purescript-turbine-starter](https://github.com/funkia/purescript-turbine-starter)
+which is a template that contains Turbine and Hareactive pre-setup.

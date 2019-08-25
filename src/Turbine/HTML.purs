@@ -295,10 +295,10 @@ type InputRangeOut = Record (InputRangeOut' ())
 -- | normal a normal input element this variant accepts three additional
 -- | attributes all of which are numbers: `max`, `min`, and `step`. Additionally
 -- | the `value` output is a `Number` and not a `String`.
-inputRange :: forall r. Subrow r (InputRangeAttrs' ()) => Record r -> Component {} { | (InputRangeOut' ()) }
+inputRange :: forall r. Subrow r (InputRangeAttrs' ()) => Record r -> Component { | (InputRangeOut' ()) } {}
 inputRange = runFn1 _inputRange <<< processAttributes
 
-foreign import _inputRange :: forall r. Subrow r (InputRangeAttrs' ()) => Fn1 (Record r) (Component {} ({ | InputRangeOut' ()}))
+foreign import _inputRange :: forall r. Subrow r (InputRangeAttrs' ()) => Fn1 (Record r) (Component ({ | InputRangeOut' ()}) {})
 
 type CheckboxAttrs' r =
   ( checked :: Behavior Boolean
@@ -319,10 +319,10 @@ type CheckboxOutput = Record (CheckboxOut' ())
 -- |
 -- | Most notably a `checkbox` outputs a behavior named `checked` denoting
 -- | whether or not the checkbox is currently checked.
-checkbox :: forall r. Subrow r CheckboxAttrs => Record r -> Component {} CheckboxOutput
+checkbox :: forall r. Subrow r CheckboxAttrs => Record r -> Component CheckboxOutput {}
 checkbox = runFn1 _checkbox <<< processAttributes
 
-foreign import _checkbox :: forall r. Subrow r CheckboxAttrs => Fn1 (Record r) (Component {} CheckboxOutput)
+foreign import _checkbox :: forall r. Subrow r CheckboxAttrs => Fn1 (Record r) (Component CheckboxOutput {})
 
 type TextareaAttrs' r =
   ( rows :: Behavior Int
@@ -333,10 +333,10 @@ type TextareaAttrs' r =
 type TextareaAttrs = TextareaAttrs' ()
 
 -- | A textarea element. Accepts `rows` and `cols` attributes.
-textarea :: forall r. Subrow r TextareaAttrs => Record r -> Component {} InputOut
+textarea :: forall r. Subrow r TextareaAttrs => Record r -> Component InputOut {}
 textarea = runFn1 _textarea <<< processAttributes
 
-foreign import _textarea :: forall r. Subrow r TextareaAttrs => Fn1 (Record r) (Component {} InputOut)
+foreign import _textarea :: forall r. Subrow r TextareaAttrs => Fn1 (Record r) (Component InputOut {})
 
 type ProgressAttrs' r =
   ( value :: Behavior Number

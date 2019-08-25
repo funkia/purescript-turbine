@@ -3,13 +3,13 @@ module ContinousTime.Main where
 import Prelude
 
 import Effect (Effect)
-import Hareactive.Types (Behavior, Stream, Now)
-import Hareactive.Combinators (time, sample, stepper, snapshot)
+import Hareactive.Types (Behavior, Stream)
+import Hareactive.Combinators (time, stepper, snapshot)
 import Data.Array (head)
 import Data.Maybe (fromMaybe)
 import Data.String (split, Pattern(..))
 import Data.JSDate (fromTime, toTimeString)
-import Turbine (Component, runComponent, output, modelView, (</>))
+import Turbine (Component, runComponent, output, component, result, (</>))
 import Turbine.HTML as H
 
 formatTime :: Number -> String
@@ -22,22 +22,17 @@ type AppModelOut =
 
 type AppViewOut = { snapClick :: Stream Unit }
 
-appModel :: AppViewOut -> Unit -> Now AppModelOut
-appModel { snapClick } _ = do
+app :: Component {} {}
+app = component \on -> do
   let msgFromClick =
         map (\t -> "You last pressed the button at " <> formatTime t)
-            (snapshot time snapClick)
+            (snapshot time on.snapClick)
   message <- stepper "You've not clicked the button yet" msgFromClick
-  pure {time, message}
-
-appView :: AppModelOut -> Unit -> Component AppViewOut _
-appView { message, time } _ =
-  H.h1 {} (H.text "Continuous") </>
-  H.p {} (H.textB $ formatTime <$> time) </>
-  H.button {} (H.text "Click to snap time") `output` (\o -> { snapClick: o.click }) </>
-  H.p {} (H.textB message)
-
-app = modelView appModel appView unit
+  ( H.h1 {} (H.text "Continuous") </>
+    H.p {} (H.textB $ formatTime <$> time) </>
+    H.button {} (H.text "Click to snap time") `output` (\o -> { snapClick: o.click }) </>
+    H.p {} (H.textB message)
+  ) `result` {}
 
 main :: Effect Unit
 main = runComponent "#mount" app

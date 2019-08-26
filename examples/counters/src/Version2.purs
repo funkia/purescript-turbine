@@ -9,8 +9,8 @@ import Data.Array (cons, filter)
 import Data.Foldable (fold, foldr)
 import Hareactive.Combinators (accum, scan, shiftCurrent)
 import Hareactive.Types (Behavior, Stream)
-import Turbine (Component, list, output, component, result, (</>))
-import Turbine.HTML as H
+import Turbine (Component, list, use, component, output, (</>))
+import Turbine.HTML as E
 
 type CounterOut =
   { count :: Behavior Int
@@ -21,14 +21,14 @@ counter :: Int -> Component CounterOut {}
 counter id = component \on -> do
   count <- accum (+) 0 on.change
   (
-    H.div {} (
-      H.text "Counter " </>
-      H.span {} (H.textB $ map show count) </>
-      H.button {} (H.text "+" ) `output` (\o -> { change: o.click $> 1 }) </>
-      H.button {} (H.text "-" ) `output` (\o -> { change: o.click $> -1 }) </>
-      H.button {} (H.text "x") `output` (\o -> { delete: o.click })
+    E.div {} (
+      E.text "Counter " </>
+      E.span {} (E.textB $ map show count) </>
+      E.button {} (E.text "+" ) `use` (\o -> { change: o.click $> 1 }) </>
+      E.button {} (E.text "-" ) `use` (\o -> { change: o.click $> -1 }) </>
+      E.button {} (E.text "x") `use` (\o -> { delete: o.click })
     )
-  ) `result` { count, delete: on.delete $> id }
+  ) `output` { count, delete: on.delete $> id }
 
 counterList :: Array Int -> Component {} {}
 counterList init = component \on -> do
@@ -39,10 +39,10 @@ counterList init = component \on -> do
   let appendCounter = cons <$> nextId
   counterIds <- accum ($) init (appendCounter <> removeCounter)
   (
-    H.div {} (
-      H.h1 {} (H.text "Counters") </>
-      H.span {} (H.textB (map (\n -> "Sum " <> show n) sum)) </>
-      H.button {} (H.text "Add counter") `output` (\o -> { addCounter: o.click }) </>
-      list (\id -> counter id `output` identity) counterIds identity `output` (\o -> { listOut: o })
+    E.div {} (
+      E.h1 {} (E.text "Counters") </>
+      E.span {} (E.textB (map (\n -> "Sum " <> show n) sum)) </>
+      E.button {} (E.text "Add counter") `use` (\o -> { addCounter: o.click }) </>
+      list (\id -> counter id `use` identity) counterIds identity `use` (\o -> { listOut: o })
     )
-  ) `result` {}
+  ) `output` {}

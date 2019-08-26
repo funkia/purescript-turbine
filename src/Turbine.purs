@@ -5,10 +5,10 @@ module Turbine
   , merge
   , (</>)
   , dynamic
-  , output
+  , use
   , component
   , ComponentResult
-  , result
+  , output
   , class Key
   , keyNoop
   , list
@@ -117,32 +117,32 @@ list = runFn3 _list
 foreign import _list :: forall a b o k. Key k =>
   Fn3 (a -> Component b o) (Behavior (Array a)) (a -> k) (Component (Behavior (Array o)) {})
 
--- | Combines two components and merges their explicit output.
+-- | Combines two components and merges their selected output.
 merge :: forall a o b p q. Union o p q => Component a { | o } -> Component b { | p } -> Component {} { | q }
 merge = runFn2 _merge
 
 foreign import _merge :: forall a o b p q. Union o p q => Fn2 (Component a { | o }) (Component b { | p }) (Component {} { | q })
 infixl 0 merge as </>
 
--- | Copies non-explicit output into explicit output.
+-- | Copies non-selected output into selected output.
 -- |
 -- | This function is often used in infix form as in the following example.
 -- |
 -- | ```purescript
--- | button (text "Fire missiles!") `output` (\o -> { fireMissiles })
+-- | button (text "Fire missiles!") `use` (\o -> { fireMissiles })
 -- | ```
-output :: forall a o p q. Union o p q => Component a { | o } -> (a -> { | p }) -> Component {} { | q }
-output = runFn2 _output
+use :: forall a o p q. Union o p q => Component a { | o } -> (a -> { | p }) -> Component {} { | q }
+use = runFn2 _use
 
-foreign import _output :: forall a o p q. Union o p q => Fn2 (Component a { | o }) (a -> { | p }) (Component {} { | q })
+foreign import _use :: forall a o p q. Union o p q => Fn2 (Component a { | o }) (a -> { | p }) (Component {} { | q })
 
 type ComponentResult a o p =
   { component :: Component a o
   , available :: p
   }
 
-result :: forall a o p f. Applicative f => Component a o -> p -> f (ComponentResult a o p)
-result c a = pure { component: c, available: a }
+output :: forall a o p f. Applicative f => Component a o -> p -> f (ComponentResult a o p)
+output c a = pure { component: c, available: a }
 
 foreign import component :: forall a o p. (o -> Now (ComponentResult a o p)) -> Component p {}
 

@@ -20,8 +20,8 @@ import Network.HTTP.Affjax.Response as AXRes
 import Network.HTTP.StatusCode (StatusCode(..))
 import Data.String.Regex (Regex, regex, test)
 import Data.String.Regex.Flags (ignoreCase)
-import Turbine (Component, modelView, output, runComponent, (</>), static)
-import Turbine.HTML as H
+import Turbine (Component, modelView, use, runComponent, (</>), static)
+import Turbine.HTML as E
 
 type AppModelOut =
   { status :: Behavior String
@@ -62,11 +62,11 @@ zipModel { zipCode } = do
   pure { status }
 
 zipView { status } =
-  H.div_ (
-    H.span_ (H.text "Please type a valid US zip code: ") </>
-    H.input (static { placeholder: "Zip code" }) `output` (\o -> { zipCode: o.inputValue }) </>
-    H.br </>
-    H.span_ (H.textB status)
+  E.div_ (
+    E.span_ (E.text "Please type a valid US zip code: ") </>
+    E.input (static { placeholder: "Zip code" }) `use` (\o -> { zipCode: o.inputValue }) </>
+    E.br </>
+    E.span_ (E.textB status)
   )
 
 app :: Component {} AppModelOut

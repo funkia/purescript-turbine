@@ -28,9 +28,9 @@ exports._merge = function() {
 
 exports.component = T.component;
 
-exports._output = function() {
+exports._use = function() {
   return function(c, r) {
-    return T.output(r, c);
+    return T.use(r, c);
   };
 };
 

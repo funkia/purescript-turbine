@@ -6,8 +6,8 @@ import Counters.Version1 as Version1
 import Counters.Version2 as Version2
 import Effect (Effect)
 import Hareactive.Combinators (stepper)
-import Turbine (Component, component, dynamic, output, result, runComponent, (</>))
-import Turbine.HTML as H
+import Turbine (Component, component, dynamic, use, output, runComponent, (</>))
+import Turbine.HTML as E
 
 data Version = One | Two
 
@@ -19,10 +19,10 @@ app :: Component {} {}
 app = component \on -> do
   version <- stepper One on.selectVersion
   (
-    H.button {} (H.text "Version 1") `output` (\o -> { selectVersion: o.click $> One }) </>
-    H.button {} (H.text "Version 2") `output` (\o -> { selectVersion: o.click $> Two }) </>
+    E.button {} (E.text "Version 1") `use` (\o -> { selectVersion: o.click $> One }) </>
+    E.button {} (E.text "Version 2") `use` (\o -> { selectVersion: o.click $> Two }) </>
     (dynamic (versionToComponent <$> version))
-  ) `result` {}
+  ) `output` {}
 
 main :: Effect Unit
 main = runComponent "#mount" app

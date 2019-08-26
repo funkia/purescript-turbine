@@ -9,7 +9,8 @@
     "todomvc": "pulp browserify --main TodoMVC.Main --include todomvc/src --to todomvc/bundle.js",
     "timer": "pulp browserify --main Timer.Main --include timer/src --to timer/bundle.js",
     "zip-codes": "pulp browserify --main ZipCodes.Main --include zip-codes/src --to zip-codes/bundle.js",
-    "continuous-time": "pulp browserify --main ContinousTime.Main --include continuous-time --to continuous-time/bundle.js"
+    "continuous-time": "pulp browserify --main ContinousTime.Main --include continuous-time --to continuous-time/bundle.js",
+      "test": "npm run email-validator && npm run counters && npm run fahrenheit-celsius && npm run todomvc && npm run continuous-time"
   },
   "dependencies": {
     "todomvc-app-css": "^2.1.2"

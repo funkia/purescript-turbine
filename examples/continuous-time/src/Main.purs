@@ -9,8 +9,8 @@ import Data.Array (head)
 import Data.Maybe (fromMaybe)
 import Data.String (split, Pattern(..))
 import Data.JSDate (fromTime, toTimeString)
-import Turbine (Component, runComponent, output, component, result, (</>))
-import Turbine.HTML as H
+import Turbine (Component, runComponent, use, component, output, (</>))
+import Turbine.HTML as E
 
 formatTime :: Number -> String
 formatTime = fromTime >>> toTimeString >>> split (Pattern " ") >>> head >>> fromMaybe ""
@@ -28,11 +28,11 @@ app = component \on -> do
         map (\t -> "You last pressed the button at " <> formatTime t)
             (snapshot time on.snapClick)
   message <- stepper "You've not clicked the button yet" msgFromClick
-  ( H.h1 {} (H.text "Continuous") </>
-    H.p {} (H.textB $ formatTime <$> time) </>
-    H.button {} (H.text "Click to snap time") `output` (\o -> { snapClick: o.click }) </>
-    H.p {} (H.textB message)
-  ) `result` {}
+  ( E.h1 {} (E.text "Continuous") </>
+    E.p {} (E.textB $ formatTime <$> time) </>
+    E.button {} (E.text "Click to snap time") `use` (\o -> { snapClick: o.click }) </>
+    E.p {} (E.textB message)
+  ) `output` {}
 
 main :: Effect Unit
 main = runComponent "#mount" app

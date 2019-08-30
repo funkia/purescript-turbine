@@ -107,6 +107,6 @@ npm i @funkia/turbine
 bower install --save purescript-turbine
 ```
 
-Alternative, use the
-[purescript-turbine-starter](https://github.com/funkia/purescript-turbine-starter)
-which is a template that contains Turbine and Hareactive pre-setup.
+Alternatively, use the
+[purescript-turbine-starter](https://github.com/funkia/purescript-turbine-starter),
+a project template that contains Turbine and Hareactive pre-setup.

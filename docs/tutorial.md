@@ -85,8 +85,8 @@ The `H.text` function used above takes a string and returns a component
 corresponding to a text node of the given string.
 
 Components are composed together with the `</>` operator. As a first
-approximation, `</>` is similar to the semigroup operator `<>`. But, while `<>`
-has a type of the form `a -> a -> a`, the type of `</>` is slightly more complex
+approximation, `</>` is similar to the semigroup operator `<>`, which has the
+type `a -> a -> a`. The type of `</>`, however, is slightly more complex,
 since components keep track of more information at the type level than a
 typical semigroup. Writing `component1 </> component2` creates a new component
 which represents the HTML from the first component followed by the HTML for the
@@ -120,8 +120,8 @@ into the following:
 Then you should see HTML corresponding to the HTML above.
 
 
-By combining `</>` with the fact that element functions accept a child
-component as their second argument, we can create arbitrary HTML of any
+By combining `</>` with the fact that each element function accepts a child
+component as its second argument, we can create arbitrary HTML of any
 complexity. In this tutorial we will build a simple counter application
 (similar to the one [shown above](#single-counter)). To this end let us create
 the HTML which we will use going forward.
@@ -137,7 +137,7 @@ counterView =
 ```
 
 Here we have hard coded the value `0` into the user interface. The intended
-outcome is that the displayed number is dynamic. It should ncrement every time the
+outcome is that the displayed number is dynamic. It should increment every time the
 `+` button is pressed and decrement every time the `-` button is pressed. But,
 in order to achieve that we need to learn a little bit of FRP.
 

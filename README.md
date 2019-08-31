@@ -33,10 +33,10 @@ counter id = component \on -> do
   ( H.div {} (
       H.text "Counter " </>
       H.span {} (H.textB $ map show count) </>
-      H.button {} (H.text "+" ) `output` (\o -> { change: o.click $> 1 }) </>
-      H.button {} (H.text "-" ) `output` (\o -> { change: o.click $> -1 })
+      H.button {} (H.text "+" ) `use` (\o -> { change: o.click $> 1 }) </>
+      H.button {} (H.text "-" ) `use` (\o -> { change: o.click $> -1 })
     )
-  ) `result` {}
+  ) `output` {}
 
 main = runComponent "#mount" (counter 0)
 ```
@@ -54,11 +54,11 @@ counter id = component \on -> do
   ( H.div {} (
       H.text "Counter " </>
       H.span {} (H.textB $ map show count) </>
-      H.button {} (H.text "+" ) `output` (\o -> { change: o.click $> 1 }) </>
-      H.button {} (H.text "-" ) `output` (\o -> { change: o.click $> -1 }) </>
-      H.button {} (H.text "x") `output` (\o -> { delete: o.click })
+      H.button {} (H.text "+" ) `use` (\o -> { change: o.click $> 1 }) </>
+      H.button {} (H.text "-" ) `use` (\o -> { change: o.click $> -1 }) </>
+      H.button {} (H.text "x") `use` (\o -> { delete: o.click })
     )
-  ) `result` { count, delete: on.delete $> id }
+  ) `output` { count, delete: on.delete $> id }
 
 counterList init = component \on -> do
   let sum = on.listOut >>= (map (_.count) >>> foldr (lift2 (+)) (pure 0))
@@ -70,10 +70,10 @@ counterList init = component \on -> do
   ( H.div {} (
       H.h1 {} (H.text "Counters") </>
       H.span {} (H.textB (map (\n -> "Sum " <> show n) sum)) </>
-      H.button {} (H.text "Add counter") `output` (\o -> { addCounter: o.click }) </>
-      list (\id -> counter id `output` identity) counterIds identity `output` (\o -> { listOut: o })
+      H.button {} (H.text "Add counter") `use` (\o -> { addCounter: o.click }) </>
+      list (\id -> counter id `use` identity) counterIds identity `use` (\o -> { listOut: o })
     )
-  ) `result` {}
+  ) `output` {}
 
 main = runComponent "#mount" (counterList [0])
 ```

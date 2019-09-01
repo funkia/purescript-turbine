@@ -20,11 +20,9 @@ module Turbine
 
 import Prelude
 
-import Control.Apply (lift2)
 import Data.Function.Uncurried (Fn2, runFn2, Fn3, runFn3)
 import Data.Symbol (class IsSymbol, SProxy(..))
 import Effect (Effect)
-import Effect.Class (class MonadEffect)
 import Effect.Uncurried (EffectFn2, runEffectFn2)
 import Hareactive.Types (Behavior, Now)
 import Prim.Row (class Union)
@@ -39,12 +37,6 @@ foreign import data Component :: Type -> Type -> Type
 
 -- Component instances
 
-instance semigroupComponent :: Semigroup o => Semigroup (Component a o) where
-  append = lift2 append
-
-instance monoidComponent :: (Monoid a, RL.RowToList row RL.Nil) => Monoid (Component { | row } a) where
-  mempty = pure mempty
-
 instance functorComponent :: Functor (Component a) where
   map = runFn2 _map
 
@@ -55,27 +47,10 @@ instance applyComponent :: Apply (Component a) where
 
 foreign import _apply :: forall a o p. Fn2 (Component a (o -> p)) (Component a o) (Component a p)
 
--- Components where the first type argument is `{}` form an applicative. `pure
--- a` returns a component that does nothing but with the empty record `{}` as
--- explicit output and with `a` as output.
-instance applicativeComponent :: (RL.RowToList row RL.Nil) => Applicative (Component { | row }) where
-  pure = _pure
-
-foreign import _pure :: forall a row. RL.RowToList row RL.Nil => a -> Component { | row } a
-
 instance bindComponent :: Bind (Component a) where
   bind = runFn2 _bind
 
 foreign import _bind :: forall a o p. Fn2 (Component a o) (o -> Component a p) (Component a p)
-
-instance monadComponent :: (RL.RowToList row RL.Nil) => Monad (Component { | row })
-
--- | Runs an `Effect` inside a `Component`. The side-effect will be executed
--- | when the `Component` is being run.
-instance monadEffectComponent :: (RL.RowToList row RL.Nil) => MonadEffect (Component { | row }) where
-  liftEffect = liftEffectComponent
-
-foreign import liftEffectComponent :: forall a row. RL.RowToList row RL.Nil => Effect a -> Component { | row } a
 
 modelView :: forall a o p. (o -> Now p) -> (p -> Component a o) -> Component p {}
 modelView m v = runFn2 _modelView m v

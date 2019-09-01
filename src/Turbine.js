@@ -10,17 +10,9 @@ exports._apply = function(f, c) {
   return c.ap(f);
 };
 
-exports._pure = function(a) {
-  return T.Component.of;
-};
-
 exports._bind = function(c, f) {
   return c.chain(f);
 };
-
-exports.liftEffectComponent = function() {
-  T.performComponent;
-}
 
 exports._merge = function() {
   return T.merge;

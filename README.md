@@ -12,7 +12,7 @@ A purely functional library for building user interfaces powered by FRP.
 * Model logic and view code is kept separate for logic-less views.
 * Highly modular and composable thanks to encapsulated stateful components.
 * Avoids using virtual DOM by utilizing FRP to make all changes to the DOM in reaction to changing behaviors.
-* Easy to reason about due to tractable reactive data flow.
+* Easy to reason about thanks to tractable reactive data flow.
 
 ## Table of contents
 
@@ -107,6 +107,6 @@ npm i @funkia/turbine
 bower install --save purescript-turbine
 ```
 
-Alternative, use the
-[purescript-turbine-starter](https://github.com/funkia/purescript-turbine-starter)
-which is a template that contains Turbine and Hareactive pre-setup.
+Alternatively, use the
+[purescript-turbine-starter](https://github.com/funkia/purescript-turbine-starter),
+a project template that contains Turbine and Hareactive pre-setup.

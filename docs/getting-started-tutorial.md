@@ -5,8 +5,8 @@ briefly as possible.
 
 Turbine is a fairly small library build on top of the FRP library Hareactive.
 When learning Turbine the bulk of the work is actually to learn Hareactive and
-FRP. This tutorial covers most of Turbine but only but only the essential types
-in Hareactive and a small fraction of its API.
+FRP. This tutorial covers most of Turbine but only the essential types in
+Hareactive and a small fraction of its API.
 
 ## A small Turbine app
 
@@ -23,12 +23,12 @@ counter id = component \on -> do
   ( E.div { class: pure "wrapper" } (
       E.text "Counter " </>
       E.span {} (E.textB $ map show count) </>
-      E.button {} (E.text "+" ) `use` (\o -> { incrememt: o.click $> 1 }) </>
+      E.button {} (E.text "+" ) `use` (\o -> { increment: o.click $> 1 }) </>
       E.button {} (E.text "-" ) `use` (\o -> { decrement: o.click $> -1 })
     )
   ) `output` { count }
 
-main = runComponent "#mount" app
+main = runComponent "#mount" counter
 ```
 
 The code creates an application that functions as shown in the GIF below.
@@ -55,8 +55,8 @@ types from Hareactive all come into play:
 * [Now](https://pursuit.purescript.org/packages/purescript-hareactive/docs/Hareactive.Types#t:Now).
   A `Now a` represents a computation that runs in an atomic moment of time,
   which has access to the current time, and which can have side-effects. A `Now
-  a` is can be though of as equivalent to `Time -> Effect a`. In the example
-  the function passed to `component` returns a `Now` hence the `do` makes the
+  a` can be though of as equivalent to `Time -> Effect a`. In the example the
+  function passed to `component` returns a `Now` hence the `do` makes the
   function run in the `Now`-monad.
 
 The primary type which Turbine adds on top of Hareactive is
@@ -86,7 +86,7 @@ interest in by calling `addEventListener` on the element.
 ## `component`
 
 In the example `counter` is a component created with the `component` function.
-A Turbine application is structured using comopnents and the `component`
+A Turbine application is structured using components and the `component`
 function is the primary way to create custom components. It has the type:
 
 ```purecript
@@ -112,7 +112,7 @@ value `1` whenever the "+" button is pressed and the `decrement` stream has an
 occurrence with the value `-1` whenever the "-" is pressed.
 
 Streams are monoids and the expression `on.increment <> on.decrement` results
-in a new streams that combines the occurrences of both streams.
+in a new stream that combines the occurrences of both streams.
 
 We then apply `accum` to the combined streams: `accum (+) 0 (on.increment <>
 on.decrement)`. The `accum` function can be though of as a "fold over time" and
@@ -158,7 +158,7 @@ counter:
 E.div { class: pure "wrapper" } (
   E.text "Counter " </>
   E.span {} (E.textB $ map show count) </>
-  E.button {} (E.text "+" ) `use` (\o -> { incrememt: o.click $> 1 }) </>
+  E.button {} (E.text "+" ) `use` (\o -> { increment: o.click $> 1 }) </>
   E.button {} (E.text "-" ) `use` (\o -> { decrement: o.click $> -1 })
 )
 ```
@@ -211,7 +211,7 @@ We are now equipped with the knowledge necessary to understand this part of the
 example:
 
 ```purescript
-E.button {} (E.text "+" ) `use` (\o -> { incrememt: o.click $> 1 }) </>
+E.button {} (E.text "+" ) `use` (\o -> { increment: o.click $> 1 }) </>
 E.button {} (E.text "-" ) `use` (\o -> { decrement: o.click $> -1 })
 ```
 
@@ -225,7 +225,7 @@ we compose the two components with `</>` and the resulting type of the above
 becomes:
 
 ```purescript
-Component { increment :: Stream Int, decrement :: Stream Int } {}
+Component {} { increment :: Stream Int, decrement :: Stream Int }
 ```
 
 This composed component is then given as the child component to the `div` function:
@@ -239,8 +239,8 @@ the selected output of the returned component. All the element functions behave
 in this way and, combined with how `</>` works, this ensures that selected
 output always "bubbles up" when HTML is constructed. The final component passed
 to `output` therefore has the selected output `{ increment :: Stream Int,
-decrement :: Stream Int } {}` and this gets passed as input to the function
-given to `component`. We have come full circle.
+decrement :: Stream Int }` and this gets passed as input to the function given
+to `component`. We have come full circle.
 
 ## Running the application
 

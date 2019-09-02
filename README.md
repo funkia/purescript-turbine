@@ -78,23 +78,6 @@ counterList init = component \on -> do
 main = runComponent "#mount" (counterList [0])
 ```
 
-## Documentation
-
-- [purescript-turbine-starter](https://github.com/funkia/purescript-turbine-starter) — A starter kit with Turbine pre-setup.
-- [Tutorial](./docs/tutorial.md)
-- [API documentation on Pursuit](https://pursuit.purescript.org/packages/purescript-turbine)
-- [Examples](#example)
-
-## Examples
-
-- [Email validator](/examples/email-validator) – A simple email validator.
-- [Fahrenheit celsius converter](/examples/fahrenheit-celsius) – Conversion between fahrenheit and celsius.
-- [Counters](/examples/counters) – A list of counters. This example shows how to create a dynamic list of components.
-- [Continuous time](/examples/continuous-time) – A very simple example showing how to work with continuous time.
-- [Timer](/examples/timer) – A more complicated example demonstrating continuous time by implementing a timer with a progress bar.
-- [Zip codes](/examples/zip-codes) – A zip code validator. Shows how to perform `Effect`s using FRP.
-- [TodoMVC](/examples/todomvc) – The classic TodoMVC example (still has a couple of bugs and no routing).
-
 ## Installation
 
 The following installs Hareactive and Turbine. Hareactive is the FRP library
@@ -110,3 +93,31 @@ bower install --save purescript-turbine
 Alternatively, use the
 [purescript-turbine-starter](https://github.com/funkia/purescript-turbine-starter),
 a project template that contains Turbine and Hareactive pre-setup.
+
+## Documentation
+
+The best place to start is the [getting started
+tutorial](/docs/getting-started-tutorial.md). It is a quick start tutorial
+which aims to explain the basics of Turbine as briefly as possible.
+
+There is also an older, slightly outdated, [tutorial](./docs/tutorial.md).
+
+Both [API documentation for
+Turbine](https://pursuit.purescript.org/packages/purescript-turbine) and [API
+documentation for
+Hareactive](https://pursuit.purescript.org/packages/purescript-hareactive) is
+on Pursuit.
+
+Taking a look at the [examples](#example) is also a great way to see Turbine
+used in practice and to see how specific things are accomplished.
+
+## Examples
+
+- [Email validator](/examples/email-validator) -- A simple email validator.
+- [Fahrenheit celsius converter](/examples/fahrenheit-celsius) -- Conversion between fahrenheit and celsius.
+- [Counters](/examples/counters) -- A list of counters. This example shows how to create a dynamic list of components.
+- [Continuous time](/examples/continuous-time) -- A very simple example showing how to work with continuous time.
+- [Timer](/examples/timer) -- A more complicated example demonstrating continuous time by implementing a timer with a progress bar.
+- [Zip codes](/examples/zip-codes) -- A zip code validator. Shows how to perform `Effect`s using FRP.
+- [TodoMVC](/examples/todomvc) -- The classic TodoMVC example (still has a couple of bugs and no routing).
+

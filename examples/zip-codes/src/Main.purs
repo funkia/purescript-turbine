@@ -2,16 +2,19 @@ module ZipCodes.Main where
 
 import Prelude
 
-import Data.Either (Either(..), fromRight, hush)
-import Effect (Effect)
-import Effect.Aff (Aff)
-import Partial.Unsafe (unsafePartial)
-import Hareactive.Combinators (changes, split, filterJust, stepper, runStreamAff)
 import Affjax as AX
 import Affjax.ResponseFormat as ResponseFormat
 import Affjax.StatusCode (StatusCode(..))
+import Data.Argonaut.Decode (class DecodeJson, decodeJson, (.:))
+import Data.Array (head)
+import Data.Either (fromRight, hush)
+import Data.Maybe (fromMaybe)
 import Data.String.Regex (Regex, regex, test)
 import Data.String.Regex.Flags (ignoreCase)
+import Effect (Effect)
+import Effect.Aff (Aff)
+import Hareactive.Combinators (changes, split, filterJust, stepper, runStreamAff)
+import Partial.Unsafe (unsafePartial)
 import Turbine (Component, component, output, use, runComponent, (</>), static)
 import Turbine.HTML as E
 
@@ -24,16 +27,31 @@ isValidZip = test zipRegex
 apiUrl :: String
 apiUrl = "http://api.zippopotam.us/us/"
 
+newtype Place = Place { name :: String
+                      , state :: String
+                      }
+
+instance decodeJsonAppUser :: DecodeJson Place where
+  decodeJson json = do
+    obj <- decodeJson json
+    name <- obj .: "place name"
+    state <- obj .: "state"
+    pure $ Place { name, state }
+
+type ZipResult = { places :: Array Place
+                 , country :: String
+                 }
+
 fetchZip :: String -> Aff String
 fetchZip zipCode = do
   res <- AX.get ResponseFormat.json (apiUrl <> zipCode)
-  pure (case res.body of
-    Left _ -> "JSON parse error"
-    Right json ->
-      if res.status == StatusCode 404
-      then "Zip code does not exist"
-      else "Valid zip code" -- TODO: Extract the city name from JSON here.
-       )
+  pure
+    if res.status == StatusCode 404
+    then "Zip code does not exist"
+    else fromMaybe "Zip code lookup failed" $ do
+      result :: ZipResult <- res.body # hush >>= (decodeJson >>> hush)
+      Place place <- head result.places
+      pure $ "Valid zip code for " <> place.name <> ", " <> place.state <> ", " <> result.country
 
 app :: Component {} {}
 app = component \on -> do

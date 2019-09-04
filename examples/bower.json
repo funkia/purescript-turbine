@@ -14,7 +14,9 @@
     "purescript-strings": "^4.0.1",
     "purescript-hareactive": "^0.1.2",
     "purescript-numbers": "^7.0.0",
-    "purescript-affjax": "^9.0.0"
+    "purescript-affjax": "^9.0.0",
+    "purescript-argonaut-core": "^5.0.1",
+    "purescript-argonaut-codecs": "^6.0.2"
   },
   "devDependencies": {
     "purescript-psci-support": "^4.0.0"

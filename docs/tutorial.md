@@ -93,7 +93,7 @@ which represents the HTML from the first component followed by the HTML for the
 second component. As an example the code:
 
 ```purescript
-const myLoginForm =
+myLoginForm =
   H.input { placeholder: "Username" } </>
   H.input { placeholder: "Password" } </>
   H.label {} (H.text "Remember login") </>
@@ -291,7 +291,7 @@ selected output and renaming it at the same time. As defined above
 
 As the piece in the puzzle to understand how output works we must now
 consider the type of the `</>` operator which is an alias for the
-[output](https://pursuit.purescript.org/packages/purescript-turbine/0.0.4/docs/Turbine#v:merge)
+[merge](https://pursuit.purescript.org/packages/purescript-turbine/0.0.4/docs/Turbine#v:merge)
 function.
 
 ```purescript
@@ -306,7 +306,7 @@ Let us return to the example with the login form from earlier. Consider how
 we might get output from the view and how the types interact:
 
 ```purescript
-const myLoginForm =
+myLoginForm =
   H.input { placeholder: "Username" } `output` (\o -> { username: o.value }) </>
   H.input { placeholder: "Password" } `output` (\o -> { password: o.value }) </>
   H.label {} (H.text "Remember login") </>

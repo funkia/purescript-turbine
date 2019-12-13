@@ -11,6 +11,7 @@ module Turbine.HTML
   , div
   , br
   , p
+  , a
   , text
   , textB
   , ul
